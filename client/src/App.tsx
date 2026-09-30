@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+
+import Picture1 from './assets/Picture1.jpg'
+import Picture2 from './assets/Picture2.jpg'
+import Picture3 from './assets/Picture3.jpg'
+
+
 import './App.css'
 
 function App() {
@@ -11,9 +14,9 @@ function App() {
     <>
       <section id="center">
         <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+          <img src={Picture1} className="base" width="170" height="179" alt="" />
+          <img src={Picture2} className="framework" alt="React logo" />
+          <img src={Picture3} className="vite" alt="Vite logo" />
         </div>
         <div>
           <h1>Get started</h1>
@@ -42,13 +45,13 @@ function App() {
           <ul>
             <li>
               <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
+                <img className="logo" src={Picture2} alt="" />
                 Explore Vite
               </a>
             </li>
             <li>
               <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
+                <img className="button-icon" src={Picture3} alt="" />
                 Learn more
               </a>
             </li>
