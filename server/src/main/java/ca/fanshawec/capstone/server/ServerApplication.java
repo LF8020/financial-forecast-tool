@@ -7,9 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = "ca.fanshawec.capstone.server.client")
 public class ServerApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}
-
 }
