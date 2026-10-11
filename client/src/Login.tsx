@@ -1,13 +1,8 @@
 import React, {useState} from 'react';
 
-interface Client {
-    name: string;
-    email: string;
-    phone: string;
-    password: string;
-}
+import type { Client } from './types';
 
-export default function Login() {
+export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Client) => void }  ) {
 
     const[isLogin, setIsLogin] = React.useState(true);
 
@@ -40,6 +35,7 @@ export default function Login() {
             });
 
             if (response.ok) {
+                onLoginSuccess(newClient);
                 console.log('Client registered successfully');
             } else {
                 console.error('Failed to register client');
