@@ -12,16 +12,16 @@ function App() {
     return (
       <div>
         <h1>Welcome, {client.name}</h1>
-        <br />
+        <br/>
         <button onClick={() => setClient(null)}>Logout</button>
       </div>
     );
   }
 
   return (
-
-    <Login onLoginSuccess={(clientData) => setClient(clientData)} />
-
+    
+      <Login onLoginSuccess={(clientData)=> setClient(clientData)}/>
+    
   )
 }
 
