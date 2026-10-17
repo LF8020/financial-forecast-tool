@@ -7,10 +7,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @CrossOrigin 
-@RepositoryRestResource(collectionResourceRel = "financial-assets", path = "financial-assets")
-public interface FinancialAssetRepository extends CrudRepository<FinancialAsset, Long> {
+@RepositoryRestResource(collectionResourceRel = "assets", path = "assets")
+public interface AssetRepository extends CrudRepository<Asset, Long> {
     @Modifying
     @Transactional
-    @Query("DELETE from FinancialAsset WHERE ID = ?1")
+    @Query("DELETE from Asset WHERE ID = ?1")
     int deleteOne(Long ID);
 }
