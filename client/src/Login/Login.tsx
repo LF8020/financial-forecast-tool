@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import type { Client } from '../types';
 
-export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Client) => void }  ) {
+import './Login.css';
 
-    const[isLogin, setIsLogin] = React.useState(true);
+export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Client) => void }) {
+
+    const [isLogin, setIsLogin] = React.useState(true);
 
     //register form
     const [name, setName] = useState('');
@@ -25,7 +27,7 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
             password
         };
         console.log(newClient);
-        try{
+        try {
             const response = await fetch('http://localhost:8080/api/clients/api/clients', {
                 method: 'POST',
                 headers: {
@@ -50,49 +52,66 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
     const handleLogin = async () => {
         const loginData = { email: loginEmail, password: loginPassword };
         console.log(loginData);
-        
-            
+
+
     }
 
     return (
-        <div>
+        <div className='container'>
             {isLogin ? (
-                <div>
-                <h1>Login</h1>
-                <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
-                    <label htmlFor="email">Email:</label>
-                    <input type="text" id="email" name="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
-                    <br />
-                    <label htmlFor="password">Password:</label>
-                    <input type="password" id="password" name="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
-                    <br />
-                    <button type="submit">Login</button>
-                </form>
+                <div className='card'>
+                    <h1>Login</h1>
+                    <form className='form' onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+
+                        <div className='form-group'>
+                            <label htmlFor="email">Email:</label>
+                            <input type="text" id="email" name="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="password">Password:</label>
+                            <input type="password" id="password" name="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
+                        </div>
+
+                        <button className='button' type="submit">Login</button>
+                    </form>
+                    <div className="page-switch">
+                        <span>Don't have an account?</span>
+                        <button type="button" onClick={() => setIsLogin(!isLogin)}>
+                            {isLogin ? 'Register' : 'Login'}
+                        </button>
+                    </div>
                 </div>
             ) : (
-                <div>
-                <h1>Register</h1>
-                <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }}>
-                    <label htmlFor="name">Name:</label>
-                    <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} required />
-                    <br />
-                    <label htmlFor="email">Email:</label>
-                    <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                    <br />
-                    <label htmlFor="phone">Phone:</label>
-                    <input type="tel" id="phone" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-                    <br />
-                    <label htmlFor="password">Password:</label>
-                    <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    <br />
-                    <button type="submit">Register</button>
-                </form>
+                <div className='card'>
+                    <h1>Register</h1>
+                    <form className='form' onSubmit={(e) => { e.preventDefault(); handleRegister(); }}>
+                        <div className="form-group">
+                            <label htmlFor="name">Name:</label>
+                            <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} required />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="email">Email:</label>
+                            <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="phone">Phone:</label>
+                            <input type="tel" id="phone" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="password">Password:</label>
+                            <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                        </div>
+
+                        <button className='button' type="submit">Register</button>
+                    </form>
                 </div>
             )}
 
-            <button type="button" onClick={() => setIsLogin(!isLogin)}>
-                switch to {isLogin ? 'Register' : 'Login'}
-            </button>
+
         </div>
     );
 }

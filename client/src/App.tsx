@@ -1,7 +1,8 @@
 
 import { useState } from 'react';
+
 import './App.css'
-import Login from './Login/Login';
+import Login from './Login/Login.tsx';
 
 import type { Client } from './types';
 
