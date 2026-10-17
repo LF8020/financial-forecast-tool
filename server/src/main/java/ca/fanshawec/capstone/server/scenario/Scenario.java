@@ -1,9 +1,8 @@
-package ca.fanshawec.capstone.server.asset;
-
-import ca.fanshawec.capstone.server.preset.Preset;
+package ca.fanshawec.capstone.server.scenario;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ca.fanshawec.capstone.server.client.Client;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,16 +13,13 @@ import jakarta.persistence.ManyToOne;
 @Entity
 @Data
 @RequiredArgsConstructor
-public class Asset {
+public class Scenario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
-    @JoinColumn(name = "preset_id", nullable = false)
-    private Preset preset;
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
     private String name;
-    private String value;
-    private String apr;
-    private String mortgage;
-    private String interest;
+    private String description;
 }
