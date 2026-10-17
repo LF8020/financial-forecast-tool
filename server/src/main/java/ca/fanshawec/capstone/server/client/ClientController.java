@@ -26,6 +26,11 @@ public class ClientController {
         Client client = clientRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid client ID: " + id));
         return new ResponseEntity<Client>(client, HttpStatus.OK);
     }
+    @PostMapping("/api/clients/login")//Login path, password needs to be encrypted before transit and decrypted after.
+    public ResponseEntity<Client> findByLogin(@RequestBody Client client) {//LF: Will likely require the client or advisor managing the client's encrypted password to be sent over as well to prevent bad actors from accessing client data.
+        Client actualClient = clientRepository.findByLogin(client.getEmail(), client.getPassword()).orElseThrow(() -> new IllegalArgumentException("Invalid client credentials: " + client.getEmail()));
+        return new ResponseEntity<Client>(actualClient, HttpStatus.OK);
+    }
     @PutMapping
     public ResponseEntity<Client> updateOne(@RequestBody Client client) {//LF: Likely needs input sanitization and validation
         Client updatedClient = clientRepository.save(client);
