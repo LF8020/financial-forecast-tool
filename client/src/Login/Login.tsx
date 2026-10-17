@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-import type { Client } from './types';
+import type { Client } from '../types';
 
 export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Client) => void }  ) {
 
