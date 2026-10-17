@@ -48,9 +48,29 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
     }
 
 
+
     // needs to implement login api in server to finish
     const handleLogin = async () => {
         const loginData = { email: loginEmail, password: loginPassword };
+        try{
+            const response = await fetch('http://localhost:8080/api/clients/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
+            });
+
+            if (response.ok) {
+                const client = await response.json();
+                onLoginSuccess(client);
+                console.log('Client logged in successfully');
+            } else {
+                console.error('Failed to login client');
+            }
+        } catch (error) {
+            console.error('Error occurred while logging in client:', error);
+        }
         console.log(loginData);
 
 
