@@ -1,5 +1,4 @@
 package ca.fanshawec.capstone.server.client;
-import ca.fanshawec.capstone.server.advisor.Advisor;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ public class Client {
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "advisor_id", nullable = true)
-    private Advisor advisor;
+    private Client advisor;
     private String name;
     private String email;
     private String phone;
