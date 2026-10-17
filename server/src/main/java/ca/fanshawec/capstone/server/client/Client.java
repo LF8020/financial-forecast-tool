@@ -2,6 +2,7 @@ package ca.fanshawec.capstone.server.client;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +17,7 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "advisor_id", nullable = true)
     private Client advisor;
