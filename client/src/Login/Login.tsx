@@ -53,7 +53,7 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
     const handleLogin = async () => {
         const loginData = { email: loginEmail, password: loginPassword };
         try{
-            const response = await fetch('http://localhost:8080/api/clients/login', {
+            const response = await fetch('http://localhost:8080/api/clients/api/clients/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
