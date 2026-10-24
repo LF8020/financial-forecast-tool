@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.fanshawec.capstone.server.client.Client;
 import ca.fanshawec.capstone.server.client.ClientRepository;
 import ca.fanshawec.capstone.server.exception.ItemNotFoundException;
-import ca.fanshawec.capstone.server.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 
 @CrossOrigin
