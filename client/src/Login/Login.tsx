@@ -49,7 +49,6 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
 
 
 
-    // needs to implement login api in server to finish
     const handleLogin = async () => {
         const loginData = { email: loginEmail, password: loginPassword };
         try{
@@ -65,6 +64,7 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
                 const client = await response.json();
                 onLoginSuccess(client);
                 console.log('Client logged in successfully');
+                console.log(client);
             } else {
                 console.error('Failed to login client');
             }
