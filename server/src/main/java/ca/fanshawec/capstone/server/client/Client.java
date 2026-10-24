@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -53,5 +56,14 @@ public class Client {
         this.email = email;
         this.phone = phone;
         this.password = password;
+    }
+    @JsonIgnore 
+    public Client getReturnAdvisor(){
+        if(advisor == null) return null;
+        return new Client(advisor.id, advisor.name, advisor.email, advisor.phone);
+    }
+    @JsonIgnore
+    public Client getReturnClient(){
+        return new Client(id, getReturnAdvisor(), name, email, phone);
     }
 }
