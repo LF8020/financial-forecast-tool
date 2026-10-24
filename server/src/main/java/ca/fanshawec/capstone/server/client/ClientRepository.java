@@ -12,7 +12,7 @@ public interface ClientRepository extends CrudRepository<Client, Long> {
     @Modifying
     @Transactional
     @Query("DELETE from Client WHERE ID = ?1")
-    int deleteOne(Long ID);
+    boolean deleteOne(Long ID);
     @Query("SELECT c FROM Client c WHERE c.email = ?1 AND c.password = ?2")
     java.util.Optional<Client> findByLogin(String email, String password);
 }
