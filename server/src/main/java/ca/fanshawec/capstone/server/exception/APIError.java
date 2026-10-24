@@ -2,6 +2,7 @@ package ca.fanshawec.capstone.server.exception;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import lombok.Data;
 

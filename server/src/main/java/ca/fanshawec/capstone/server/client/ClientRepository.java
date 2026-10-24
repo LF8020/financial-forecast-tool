@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import java.util.List;
 
 @CrossOrigin 
 @RepositoryRestResource(collectionResourceRel = "clients", path = "clients")
@@ -15,4 +16,10 @@ public interface ClientRepository extends CrudRepository<Client, Long> {
     boolean deleteOne(Long ID);
     @Query("SELECT c FROM Client c WHERE c.email = ?1 AND c.password = ?2")
     java.util.Optional<Client> findByLogin(String email, String password);
+    @Query("SELECT c FROM Client c WHERE c.email = ?1")
+    java.util.Optional<Client> findDuplicateEmail(String email);
+    @Query("SELECT c FROM Client c WHERE c.name = ?1")
+    java.util.Optional<Client> findDuplicateName(String name);
+    @Query("SELECT c FROM Client c WHERE c.advisorId = ?1")
+    java.util.Optional<List<Client>> findAdvisorClients(long advisorId);
 }

@@ -52,6 +52,7 @@ public class ServerExceptionHandler{
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
+    //Handles ItemNotFound exception thrown when something isn't found in the database.
     @ExceptionHandler (ItemNotFoundException.class)
     public ResponseEntity<APIError> handleNotFound(
             ItemNotFoundException ex, HttpServletRequest request) {
@@ -65,6 +66,7 @@ public class ServerExceptionHandler{
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
+    //Handles Unauthorized exception thrown when passwords provided to the server by the client are invalid
     @ExceptionHandler (UnauthorizedException.class)
     public ResponseEntity<APIError> handleNotFound(
             UnauthorizedException ex, HttpServletRequest request) {
@@ -76,5 +78,19 @@ public class ServerExceptionHandler{
                 request.getRequestURI()
         );
         return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+    }
+
+    //DuplicateEntry exception thrown when a duplicate entry exists already exists in the database when trying to update/add another item
+    @ExceptionHandler (DuplicateEntryException.class)
+    public ResponseEntity<APIError> handleNotFound(
+            DuplicateEntryException ex, HttpServletRequest request) {
+        
+        APIError apiError = new APIError(
+                HttpStatus.CONFLICT.value(),
+                "Duplicate entry in database",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 }
