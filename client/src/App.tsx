@@ -20,7 +20,7 @@ function App() {
     return (
       <div>
         <h1>Welcome, {client.name}</h1>
-        {client.id !== undefined && <Home clientId={client.id} />}
+        {client.id !== undefined && <Home client={{ clientId: client.id, clientPassword: client.password }} />}
         <br />
         <button onClick={() => window.location.href = '/financial-info'}>Go to Financial Info</button>
         <button onClick={() => setClient(null)}>Logout</button>

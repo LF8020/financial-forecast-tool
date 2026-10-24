@@ -21,3 +21,8 @@ export interface Scenario {
     name: string;
     description: string;
 }
+
+export interface ScenarioRequest {
+    clientId: number;
+    clientPassword: string;
+}

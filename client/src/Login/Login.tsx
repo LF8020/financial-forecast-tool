@@ -37,7 +37,13 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
             });
 
             if (response.ok) {
-                onLoginSuccess(newClient);
+                const savedClient = await response.json();
+                const clientData = {
+                    ...savedClient,
+                    clientId: savedClient.id,
+                    clientPassword: savedClient.password
+                };
+                onLoginSuccess(clientData);
                 console.log('Client registered successfully');
             } else {
                 console.error('Failed to register client');
@@ -62,9 +68,13 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
 
             if (response.ok) {
                 const client = await response.json();
-                onLoginSuccess(client);
-                console.log('Client logged in successfully');
-                console.log(client);
+
+                const clientData = {
+                    ...client,
+                    password: loginPassword
+                };
+                onLoginSuccess(clientData);
+                console.log("logged in client", clientData);
             } else {
                 console.error('Failed to login client');
             }
@@ -72,8 +82,6 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
             console.error('Error occurred while logging in client:', error);
         }
         console.log(loginData);
-
-
     }
 
     return (
