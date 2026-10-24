@@ -1,0 +1,116 @@
+.info-page {
+    min-height: 100vh;
+    padding: 40px 16px;
+    background-color: #f8fafc;
+    box-sizing: border-box;
+}
+
+.info-page .content {
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+.info-page .card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-page h1,
+.info-page h2 {
+    margin-top: 0;
+}
+
+.info-page .form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-page .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-page .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.info-page .button {
+    width: 100%;
+    padding: 14px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.info-page .button:hover {
+    background-color: #1d4ed8;
+}
+
+.info-page .back {
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #64748b;
+    color: white;
+    cursor: pointer;
+}
+
+.info-page .table-wrap {
+    overflow-x: auto;
+}
+
+.info-page table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    margin-top: 15px;
+}
+
+.info-page th,
+.info-page td {
+    padding: 10px;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.info-page .remove {
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+.info-page .totals {
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+/*removes arrows for input*/
+
+.info-page input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.info-page input::-webkit-inner-spin-button,
+.info-page input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
