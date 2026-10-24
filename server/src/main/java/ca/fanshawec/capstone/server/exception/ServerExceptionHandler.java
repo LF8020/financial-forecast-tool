@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import jakarta.servlet.http.HttpServletRequest;
 
-//Class to handle all exceptions from bad client input.
+//LF: Class to handle all exceptions from both bad client input and malicious requests made without the client.
+//TODO: Maybe some sort of defense against DOS attacks and session tokens for users in the future.
 @RestControllerAdvice 
 public class ServerExceptionHandler{
 
-    //This handler should handle most errors related to fields being wrong.
+    //LF: This handler should handle most errors related to fields being wrong.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIError> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
             APIError apiError = new APIError(
@@ -38,7 +39,7 @@ public class ServerExceptionHandler{
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    // Should handle completely messed up JSON data from one thing or another
+    //LF: Handles times when JSON data doesn't match expected input.
     @ExceptionHandler (HttpMessageNotReadableException.class)
     public ResponseEntity<APIError> handleMalformedJson(
             HttpMessageNotReadableException ex, HttpServletRequest request) {
@@ -52,7 +53,7 @@ public class ServerExceptionHandler{
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    //Handles ItemNotFound exception thrown when something isn't found in the database.
+    //LF: Handles ItemNotFound exception thrown when something isn't found in the database.
     @ExceptionHandler (ItemNotFoundException.class)
     public ResponseEntity<APIError> handleNotFound(
             ItemNotFoundException ex, HttpServletRequest request) {
@@ -66,7 +67,8 @@ public class ServerExceptionHandler{
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
-    //Handles Unauthorized exception thrown when passwords provided to the server by the client are invalid
+    //LF: Handles Unauthorized exception thrown when scenarios are accessed without the proper credentials.
+    //TODO: Deprecated at the moment but will be added back with Advisor handling. 
     @ExceptionHandler (UnauthorizedException.class)
     public ResponseEntity<APIError> handleNotFound(
             UnauthorizedException ex, HttpServletRequest request) {
@@ -80,7 +82,7 @@ public class ServerExceptionHandler{
         return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
     }
 
-    //DuplicateEntry exception thrown when a duplicate entry exists already exists in the database when trying to update/add another item
+    //LF: DuplicateEntry exception thrown when a duplicate entry exists already exists in the database when trying to update/add another item
     @ExceptionHandler (DuplicateEntryException.class)
     public ResponseEntity<APIError> handleNotFound(
             DuplicateEntryException ex, HttpServletRequest request) {
