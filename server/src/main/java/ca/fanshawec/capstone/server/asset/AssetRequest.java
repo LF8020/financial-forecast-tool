@@ -1,5 +1,6 @@
 package ca.fanshawec.capstone.server.asset;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -11,14 +12,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Value 
 @AllArgsConstructor
 public class AssetRequest {
-    @NotBlank(message = "Id must not be blank", groups = {IdCheck.class})
+    @NotNull(message = "Id must not be blank", groups = {IdCheck.class})
     private Long id;
-    @NotBlank(message = "ClientId must not be blank", groups = {AuthCheck.class})
+    @NotNull(message = "ClientId must not be blank", groups = {AuthCheck.class})
     private Long clientId;
     @Size(min = 5, max = 99, message = "Password must be longer than 4 characters and shorter than 100", groups = {AuthCheck.class})
     @NotBlank(message = "Password must not be blank", groups = {AuthCheck.class})
     private String clientPassword;
-    @NotBlank(message = "ScenarioId must not be blank", groups = {InfoCheck.class, UpdateCheck.class})
+    @NotNull(message = "ScenarioId must not be blank", groups = {InfoCheck.class, UpdateCheck.class})
     private Long scenarioId;
     @Size(max = 49, message = "Name must be shorter than 50 characters", groups = {UpdateCheck.class})
     @NotBlank(message = "Name must not be blank", groups = {UpdateCheck.class})
