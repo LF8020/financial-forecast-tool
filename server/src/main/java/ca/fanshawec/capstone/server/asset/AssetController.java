@@ -56,7 +56,7 @@ public class AssetController {
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + assetReq.getScenarioId()));
         Asset assetCheck = assetRepository.findById(assetReq.getId()).orElseThrow(() -> new ItemNotFoundException("Asset doesn't exist in database"));
         assetCheck = assetRepository.save(new Asset(assetReq.getId(), scenarioCheck, assetReq.getName(), assetReq.getDescription(), assetReq.getWorth(), assetReq.getApr(), assetReq.getMortgage(), assetReq.getInterest()));
-        AssetReturn returnAsset = new AssetReturn(assetCheck.getId(), scenarioCheck.getId(), assetCheck.getName(), assetCheck.getDescription(), assetCheck.getWorth(), assetCheck.getApr(), assetCheck.getMortgage(), assetCheck.getInterest());
+        AssetReturn returnAsset = new AssetReturn(assetCheck.getId(), assetCheck.getName(), assetCheck.getDescription(), assetCheck.getWorth(), assetCheck.getApr(), assetCheck.getMortgage(), assetCheck.getInterest());
         //LF: TODO: Encrypt Response
         return new ResponseEntity<AssetReturn>(returnAsset, HttpStatus.OK);
     }
@@ -109,7 +109,6 @@ public class AssetController {
         //LF: TODO: Encrypt response
         AssetReturn returnAsset = new AssetReturn(
             newAsset.getId(), 
-            scenarioCheck.getId(), 
             newAsset.getName(), 
             newAsset.getDescription(), 
             newAsset.getWorth(), 

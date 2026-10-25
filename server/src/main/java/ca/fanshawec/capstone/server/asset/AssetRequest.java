@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Value 
 @AllArgsConstructor
 public class AssetRequest {
-    @NotNull(message = "Id must not be blank", groups = {IdCheck.class})
+    @NotNull(message = "Id must not be null", groups = {IdCheck.class})
     private Long id;
-    @NotNull(message = "ClientId must not be blank", groups = {AuthCheck.class})
+    @NotNull(message = "ClientId must not be null", groups = {AuthCheck.class})
     private Long clientId;
     @Size(min = 5, max = 99, message = "Password must be longer than 4 characters and shorter than 100", groups = {AuthCheck.class})
     @NotBlank(message = "Password must not be blank", groups = {AuthCheck.class})
