@@ -6,30 +6,62 @@ export default function Home({client}: {client: { clientId: number; clientPasswo
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
     const [scenarioId, setScenarioId] = useState<number | null>(null);
 
-    useEffect(() => {
-        const fetchScenarios = async () => {
-            try{
-                const payload: ScenarioRequest = {
-                    clientId: client.clientId,
-                    clientPassword: client.clientPassword
-                };
-                console.log("debug payload", payload);
-                const response = await fetch('http://localhost:8080/api/scenarios/api/scenarios/get', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const data: Scenario[] = await response.json();
-                console.log(data);
-                setScenarios(data);
-            } catch (error) {
-                console.error('Error fetching scenarios:', error);
+    const [isCreating, setIsCreating] = useState(false);
+    const [newName, setNewName] = useState('');
+    const [newDescription, setNewDescription] = useState('');
+
+    
+
+    const fetchScenarios = async () => {
+        try{
+            const payload: ScenarioRequest = {
+                clientId: client.clientId,
+                clientPassword: client.clientPassword
+            };
+            console.log("debug payload", payload);
+            const response = await fetch('http://localhost:8080/api/scenarios/api/scenarios/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            const data: Scenario[] = await response.json();
+            setScenarios(data);
+        } catch (error) {
+            console.error('Error fetching scenarios:', error);
+        }
+    };
+
+    const handleCreateScenario = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const payload = {
+                clientId: client.clientId,
+                clientPassword: client.clientPassword,
+                name: newName,
+                description: newDescription
+            };
+            const response = await fetch('http://localhost:8080/api/scenarios/api/scenarios', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                const createdScenario = await response.json();
+                setScenarios(prev => [...prev, createdScenario]);
+
+                setNewName('');
+                setNewDescription('');
+                setIsCreating(false);
             }
-        };
-        fetchScenarios();
-    }, [client]);
+        } catch (error) {
+            console.error('Error creating scenario:', error);
+        }
+    };
 
     const handleScenarioClick = async (id: number) => {
         setScenarioId(id);
@@ -54,10 +86,31 @@ export default function Home({client}: {client: { clientId: number; clientPasswo
         }
     };
 
+    useEffect(() => {
+        fetchScenarios();
+    }, [client]);
 
 
     return (
-        <>        
+        <>  
+        {isCreating && (
+            <form onSubmit={handleCreateScenario}>
+                <input
+                    type="text"
+                    placeholder="Scenario Name"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Scenario Description"
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                />
+                <button type="submit">Create</button>
+                <button type="button" onClick={() => setIsCreating(false)}>Cancel</button>
+            </form>
+        )}
         {scenarioId !== null ? (
             <div>
                 <h1>Scenario Details</h1>
@@ -76,7 +129,7 @@ export default function Home({client}: {client: { clientId: number; clientPasswo
                 ))}
             </ul>
             <button 
-                onClick={() => console.log('Create new scenario')}
+            onClick={() => setIsCreating(true)}
             >
                 Create New Scenario
             </button>
