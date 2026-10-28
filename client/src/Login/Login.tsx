@@ -40,8 +40,7 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
                 const savedClient = await response.json();
                 const clientData = {
                     ...savedClient,
-                    clientId: savedClient.id,
-                    clientPassword: savedClient.password
+                    password: password
                 };
                 onLoginSuccess(clientData);
                 console.log('Client registered successfully');
