@@ -7,6 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
+//LF: Assets as a whole will likely be modified or split in the future to acoomodate multiple asset types.
 @CrossOrigin 
 @RepositoryRestResource(collectionResourceRel = "assets", path = "assets")
 public interface AssetRepository extends CrudRepository<Asset, Long> {

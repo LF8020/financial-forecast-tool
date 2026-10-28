@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 //    All sensitive information will be encrypted at rest and in transit using X25519MLKEM768, a post-quantum encryption algorithm.
 
 //LF: Controller for Asset. All HTTP paths for asset will be handled here.
+//    Assets as a whole will likely be modified or split in the future to acoomodate multiple asset types.
 public class AssetController {
     private final AssetRepository assetRepository;
     private final ScenarioRepository scenarioRepository;
