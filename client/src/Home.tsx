@@ -113,7 +113,7 @@ export default function Home({client}: {client: { clientId: number; clientPasswo
         )}
         {scenarioId !== null ? (
             <div>
-                <h1>Scenario Details</h1>
+                <h1>{scenarios.find(s => s.id === scenarioId)?.name} Scenario Details</h1>
                 <p>Scenario ID: {scenarioId}</p>
                 <button onClick={() => setScenarioId(null)}>Back to Scenarios</button>
             </div>
