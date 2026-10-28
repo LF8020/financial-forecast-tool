@@ -37,4 +37,8 @@ public interface ClientRepository extends CrudRepository<Client, Long> {
     //LF: Find clients by advisorId, this will return a list of all clients with that clientId as their advisor.
     @Query("SELECT c FROM Client c WHERE c.advisor.id = ?1")
     java.util.Optional<List<Client>> findAdvisorClients(long advisorId);
+
+    //LF: Find client advisors by hash, this will return a list any advisor currently using that hash with no duplicates.
+    @Query("SELECT c FROM Client c WHERE c.advisor.hash = ?1")
+    java.util.Optional<Client> findByHash(String advisorHash);
 }
