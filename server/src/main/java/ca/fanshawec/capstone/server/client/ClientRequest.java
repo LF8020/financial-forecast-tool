@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
 //LF: ClientRequest class, this class helps automate some error handling and authentication on inputs.
 //    I may come back to this in the future to make my own authentication and remodel this to be compatible with encryption.
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ClientRequest {
     @NotBlank(message = "Id must not be blank", groups = {FullCheck.class, AuthCheck.class})
     private Long id;
+    @NotBlank(message = "clientId must not be blank", groups = {AdvisorCheck.class})
+    private Long clientId;
     @Size(min = 5, max = 99, message = "Name must be longer than 4 characters and shorter than 100", groups = {FullCheck.class, RegisterCheck.class})
     @NotBlank(message = "Name must not be blank", groups = {FullCheck.class, RegisterCheck.class})
     private String name;
@@ -30,9 +31,14 @@ public class ClientRequest {
     @Size(min = 5, max = 99, message = "Password must be longer than 4 characters and shorter than 100", groups = FullCheck.class)
     @NotBlank(message = "Password must not be blank", groups = FullCheck.class)
     private String secondPassword;
+    @Size(min = 5, max = 99, message = "Hash must be longer than 2 characters and shorter than 256", groups = HashCheck.class)
+    @NotBlank(message = "Hash must not be blank", groups = HashCheck.class)
+    private String hash;
 
     public interface LoginCheck {}
     public interface RegisterCheck {}
     public interface FullCheck {}
     public interface AuthCheck {}
+    public interface HashCheck {}
+    public interface AdvisorCheck {}
 }

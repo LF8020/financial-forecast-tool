@@ -15,3 +15,14 @@ export interface Asset {
     mortgage: number;
     interest: number;
 }
+
+export interface Scenario {
+    id: number;
+    name: string;
+    description: string;
+}
+
+export interface ScenarioRequest {
+    clientId: number;
+    clientPassword: string;
+}

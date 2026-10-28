@@ -28,6 +28,7 @@ public class Client {
     @ManyToOne
     @JoinColumn(name = "advisor_id", nullable = true)
     private Client advisor;
+    private String hash;
     @Nonnull
     private String name;
     @Nonnull 
