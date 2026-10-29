@@ -1,8 +1,11 @@
 import type { Scenario, ScenarioRequest } from './types';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home({client}: {client: { clientId: number; clientPassword: string }}) {
 
+
+    const navigate = useNavigate();
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
     const [scenarioId, setScenarioId] = useState<number | null>(null);
 
@@ -63,27 +66,8 @@ export default function Home({client}: {client: { clientId: number; clientPasswo
         }
     };
 
-    const handleScenarioClick = async (id: number) => {
-        setScenarioId(id);
-        console.log('Selected scenario ID:', id);
-        try{
-            const payload = {
-                clientId: client.clientId,
-                clientPassword: client.clientPassword,
-                scenarioId: id
-            };
-            const response = await fetch('http://localhost:8080/api/assets/api/assets/get', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
-            console.log('Fetched assets:', data);
-        } catch (error) {
-            console.error('Error fetching assets:', error);
-        }
+    const handleScenarioClick = (scenario: Scenario) => {
+        navigate(`/scenario/${scenario.id}`);
     };
 
     useEffect(() => {
@@ -92,7 +76,10 @@ export default function Home({client}: {client: { clientId: number; clientPasswo
 
 
     return (
-        <>  
+        <>
+        <div>
+            Welcome {client.clientId}
+        </div>  
         {isCreating && (
             <form onSubmit={handleCreateScenario}>
                 <input
@@ -123,7 +110,7 @@ export default function Home({client}: {client: { clientId: number; clientPasswo
             {scenarios.length === 0 && <p>No scenarios available.</p>}
             <ul>
                 {scenarios.map((scenario) => (
-                    <li key={scenario.id} onClick={() => handleScenarioClick(scenario.id)}>
+                    <li key={scenario.id} onClick={() => handleScenarioClick(scenario)}>
                         <h2>{scenario.name}</h2>
                     </li>
                 ))}

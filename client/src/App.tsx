@@ -7,6 +7,7 @@ import Login from './Login/Login.tsx';
 import type { Client } from './types';
 import Home from './Home.tsx';
 import {  BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import Scenario from './Scenario/Scenario.tsx';
 
 function AppContent() {
   const [client, setClient] = useState<Client | null>(null);
@@ -30,6 +31,12 @@ function AppContent() {
               <Home client={{ clientId: client.id, clientPassword: client.password }} />
               <button onClick={() => setClient(null)}>Logout</button>
             </div>
+          }
+        />
+        <Route 
+          path="/scenario/:id"
+          element={
+            <Scenario client={{ clientId: client.id, clientPassword: client.password }} />
           }
         />
       </Routes>

@@ -1,15 +1,14 @@
 
 
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import FinancialInfo from "../FinancialInfo/FinancialInfo";
 
-export default function Scenario({client}) {
-
-    const navigate = useNavigate()
-    
+export default function Scenario({client} : { client: { clientId: string; clientPassword: string }}) {
+    const { id } = useParams();
 
     return (
         <div>
-            <button onClick={() => navigate('/')}>Go Home</button>
+            <FinancialInfo client={ client } scenarioId={ Number(id) } />
         </div>
     )
 }
