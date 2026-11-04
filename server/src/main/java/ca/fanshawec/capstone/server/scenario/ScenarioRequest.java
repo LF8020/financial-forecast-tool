@@ -25,9 +25,12 @@ public class ScenarioRequest {
     @Size(min = 5, max = 99, message = "Password must be longer than 4 characters and shorter than 100", groups = {AuthCheck.class})
     @NotBlank(message = "Password must not be blank", groups = {AuthCheck.class})
     private String clientPassword;
+    @NotNull(message = "Locked must not be blank", groups = {CreateCheck.class})
+    private Boolean locked;
 
     public interface AuthCheck {}
     public interface UpdateCheck {}
     public interface IdCheck {}
+    public interface CreateCheck {}
 }
 

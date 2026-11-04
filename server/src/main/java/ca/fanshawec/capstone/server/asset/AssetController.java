@@ -52,7 +52,7 @@ public class AssetController {
         //LF: TODO: Decrypt request
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
-        Scenario scenarioCheck = scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
+        Scenario scenarioCheck = scenarioRepository.findById(assetReq.getScenarioId(), clientCheck.getPassword() != assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + assetReq.getScenarioId()));
         Asset assetCheck = assetRepository.findById(assetReq.getId()).orElseThrow(() -> new ItemNotFoundException("Asset doesn't exist in database"));
         assetCheck = assetRepository.save(new Asset(assetReq.getId(), scenarioCheck, assetReq.getName(), assetReq.getDescription(), assetReq.getWorth(), assetReq.getApr(), assetReq.getMortgage(), assetReq.getInterest()));
@@ -74,9 +74,9 @@ public class AssetController {
         //LF: TODO: Decrypt request
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
-        scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
+        scenarioRepository.findById(assetReq.getScenarioId(), clientCheck.getPassword() != assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + assetReq.getScenarioId()));
-        boolean deleted = assetRepository.delete(assetReq.getId(), assetReq.getClientPassword());
+        boolean deleted = assetRepository.delete(assetReq.getId());
         //LF: TODO: Encrypt response? Maybe? Probably not.
         return new ResponseEntity<Boolean>(deleted, HttpStatus.OK);
     }
@@ -100,7 +100,7 @@ public class AssetController {
         //LF: TODO: Decrypt request
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
-        Scenario scenarioCheck = scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
+        Scenario scenarioCheck = scenarioRepository.findById(assetReq.getScenarioId(), clientCheck.getPassword() != assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + assetReq.getScenarioId()));
         Asset newAsset = assetRepository.save(new Asset(scenarioCheck, assetReq.getName(), assetReq.getDescription(), assetReq.getWorth(), assetReq.getApr(), assetReq.getMortgage(), assetReq.getInterest()));
         

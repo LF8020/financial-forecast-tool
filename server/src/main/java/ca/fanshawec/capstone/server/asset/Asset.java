@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import org.hibernate.annotations.OnDelete;
-
 import ca.fanshawec.capstone.server.scenario.Scenario;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
@@ -30,8 +27,7 @@ public class Asset {
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "scenario_id", nullable = false)
-    @Nonnull
-    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
+    @Nonnull 
     private Scenario scenario;
     @Nonnull 
     private String name;

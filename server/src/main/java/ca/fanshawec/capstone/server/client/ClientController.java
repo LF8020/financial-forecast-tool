@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import ca.fanshawec.capstone.server.exception.DuplicateEntryException;
 import ca.fanshawec.capstone.server.exception.ItemNotFoundException;
-import ca.fanshawec.capstone.server.exception.UnauthorizedException;
+import ca.fanshawec.capstone.server.exception.UnauthorizedException;//Deprecated right now, may be used later.
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

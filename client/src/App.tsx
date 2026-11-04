@@ -5,7 +5,7 @@ import './App.css'
 import Login from './Login/Login.tsx';
 
 import type { Client } from './types';
-import Home from './Home/Home.tsx';
+import Home from './Homepage/Home.tsx';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import Scenario from './Scenario/Scenario.tsx';
 
