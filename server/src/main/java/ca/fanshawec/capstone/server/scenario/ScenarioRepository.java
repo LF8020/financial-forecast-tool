@@ -17,10 +17,10 @@ public interface ScenarioRepository extends CrudRepository<Scenario, Long> {
     @Query("DELETE from Scenario WHERE ID = ?1")
     boolean delete(Long ID);
 
-    //LF: Query which returns all scenarios which share the inputted clientId
-    @Query("SELECT s FROM Scenario s WHERE s.client.id = ?1")
-    java.util.Optional<List<ScenarioReturn>> findScenariosById(long clientID);
-    //LF: Query which selects an existing scenario based off of the inputted scenarioId and the authenticaed clientId.
-    @Query("SELECT s FROM Scenario s WHERE ID = ?1 AND s.client.id = ?2")
+    //LF: Query which returns all scenarios which share the inputted clientId and password (of the client or advisor)
+    @Query("SELECT s FROM Scenario s WHERE s.client.id = ?1 AND s.client.password = ?2 OR s.client.id = ?1 AND s.client.advisor.password = ?2 AND s.locked = false")
+    java.util.Optional<List<ScenarioReturn>> findScenariosById(long clientID, String password);
+    //LF: Query which selects an existing scenario based off of the inputted scenarioId and the authenticated clientId or scenarioId and the authenticated advisorId.
+    @Query("SELECT s FROM Scenario s WHERE ID = ?1 AND s.client.id = ?2 OR ID = ?1 AND s.client.advisor.id = ?2 AND s.locked = false")
     java.util.Optional<Scenario> findByClient(long id, long clientId);
 }

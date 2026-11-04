@@ -50,7 +50,6 @@ public class AssetController {
     @PutMapping
     public ResponseEntity<AssetReturn> updateOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class, AssetRequest.UpdateCheck.class}) @PathVariable AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
         Scenario scenarioCheck = scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
@@ -73,12 +72,11 @@ public class AssetController {
     @DeleteMapping("/api/assets")
     public ResponseEntity<Boolean> deleteOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class}) @PathVariable AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
         scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + assetReq.getScenarioId()));
-        boolean deleted = assetRepository.delete(assetReq.getId());
+        boolean deleted = assetRepository.delete(assetReq.getId(), assetReq.getClientPassword());
         //LF: TODO: Encrypt response? Maybe? Probably not.
         return new ResponseEntity<Boolean>(deleted, HttpStatus.OK);
     }
@@ -100,7 +98,6 @@ public class AssetController {
     @PostMapping("/api/assets")
     public ResponseEntity<AssetReturn> createOne(@Validated({AssetRequest.AuthCheck.class, AssetRequest.UpdateCheck.class}) @RequestBody AssetRequest assetReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid scenarios. Password should be encrypted using X25519MLKEM768.
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
         Scenario scenarioCheck = scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
@@ -131,10 +128,9 @@ public class AssetController {
     @PostMapping("/api/assets/get")
     public ResponseEntity<List<AssetReturn>> getScenarios(@Validated({AssetRequest.AuthCheck.class, AssetRequest.InfoCheck.class}) @RequestBody AssetRequest assetReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
-        clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
+        Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
-        List<AssetReturn> assetList = assetRepository.findAssetsById(assetReq.getScenarioId()).orElse(Collections.emptyList());
+        List<AssetReturn> assetList = assetRepository.findAssetsById(assetReq.getScenarioId(), clientCheck.getId()).orElse(Collections.emptyList());
         //LF: TODO: Encrypt reponse
         return new ResponseEntity<List<AssetReturn>>(assetList, HttpStatus.OK);        
     }

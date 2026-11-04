@@ -36,4 +36,6 @@ public class Scenario {
     private String name;
     @Nonnull 
     private String description;
+    @Nonnull
+    private Boolean locked;
 }
