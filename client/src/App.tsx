@@ -3,36 +3,63 @@ import { useState } from 'react';
 
 import './App.css'
 import Login from './Login/Login.tsx';
-import FinancialInfo from './FinancialInfo/FinancialInfo.tsx';
 
 import type { Client } from './types';
-import Home from './Home.tsx';
+import Home from './Homepage/Home.tsx';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import Scenario from './Scenario/Scenario.tsx';
 
-function App() {
+function AppContent() {
   const [client, setClient] = useState<Client | null>(null);
 
-  //financial page testing for dummy values
-  if (window.location.pathname === '/financial-info') {
-    return <FinancialInfo onBack={() => window.location.href = '/'} />;
-  }
+  const navigate = useNavigate();
 
-  if (client) {
-    return (
-      <div>
-        <h1>Welcome, {client.name}</h1>
-        {client.id !== undefined && <Home client={{ clientId: client.id, clientPassword: client.password }} />}
-        <br />
-        <button onClick={() => window.location.href = '/financial-info'}>Go to Financial Info</button>
-        <button onClick={() => setClient(null)}>Logout</button>
-      </div>
-    );
+  if (!client || client.id == null) {
+    return <Login onLoginSuccess={(clientData) => {
+      setClient(clientData);
+      navigate('/');
+    }} />;
   }
 
   return (
+    <div className="App">
+      <div className="app-menu">
+        <button onClick={() => navigate('/')}>Home</button>
+        <button onClick={() => setClient(null)}>Logout</button>
+      </div>
 
-    <Login onLoginSuccess={(clientData) => setClient(clientData)} />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home client={{
+              clientId: client.id,
+              clientPassword: client.password,
+              clientName: client.name
+            }} />
+          }
+        />
+        <Route
+          path="/scenario/:id"
+          element={
+            <Scenario client={{
+              clientId: client.id,
+              clientPassword: client.password
+            }} />
+          }
+        />
+      </Routes>
+    </div>
+  );
+}
+
+export default function App() {
+
+  return (
+
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
 
   )
 }
-
-export default App

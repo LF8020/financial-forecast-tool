@@ -1,16 +1,14 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './FinancialInfo.css';
 
 import type { Asset } from '../types';
 
-export default function FinancialInfo({ onBack }: { onBack: () => void }) {
+export default function FinancialInfo({ client, scenarioId }) {
+    const navigate = useNavigate();
 
-    const [assets, setAssets] = useState<Asset[]>([
-        { id: 1, name: 'Stocks', description: 'Tech Stocks', worth: 100000, apr: 7, mortgage: 0, interest: 0 },
-        { id: 2, name: 'House', description: 'House on Smith Street', worth: 500000, apr: 3.5, mortgage: 300000, interest: 5 },
-        { id: 3, name: 'Car', description: 'Toyota', worth: 25000, apr: -2, mortgage: 15000, interest: 3 },
-    ]);
+    const [assets, setAssets] = useState<Asset[]>([]);
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -18,6 +16,32 @@ export default function FinancialInfo({ onBack }: { onBack: () => void }) {
     const [apr, setApr] = useState('');
     const [mortgage, setMortgage] = useState('');
     const [interest, setInterest] = useState('');
+
+    useEffect(() => {
+        const fetchAssets = async () => {
+            try {
+                const payload = {
+                    clientId: client.clientId,
+                    clientPassword: client.clientPassword,
+                    scenarioId: scenarioId
+                };
+                const response = await fetch('http://localhost:8080/api/assets/api/assets/get', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                console.log('Fetched assets:', data);
+                setAssets(data);
+            } catch (error) {
+                console.error('Error fetching assets:', error);
+            }
+        }
+        fetchAssets();
+    }, [client, scenarioId]);
+
 
     let totalWorth = 0;
     let totalMortgage = 0;
@@ -56,7 +80,8 @@ export default function FinancialInfo({ onBack }: { onBack: () => void }) {
     return (
         <div className="info-page">
             <div className="content">
-                <button className="back" type="button" onClick={onBack}>Back to Home</button>
+                
+                <button className="back" type="button" onClick={() => navigate('/')}>Back to Home</button>
 
                 <div className="card">
                     <h1>Financial Information</h1>

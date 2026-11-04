@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import ca.fanshawec.capstone.server.exception.DuplicateEntryException;
 import ca.fanshawec.capstone.server.exception.ItemNotFoundException;
-import ca.fanshawec.capstone.server.exception.UnauthorizedException;
+import ca.fanshawec.capstone.server.exception.UnauthorizedException;//Deprecated right now, may be used later.
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -63,7 +63,7 @@ public class ClientController {
     //LF: Update a client. Explicitly requires:
     /*
         ClientRequest{
-            Long: id
+            Long: id (clientId)
             String: name
             String: email
             String: phone
@@ -94,10 +94,11 @@ public class ClientController {
         return new ResponseEntity<ClientReturn>(returnClient, HttpStatus.OK);
     }
 
-    //LF: Delete a client. Explicitly requires:
+    //LF: Delete a client, cascades deletion through scenarios and assets and sets 
+    //    advisors of clients referencing this one to null. Explicitly requires:
     /*
         ClientRequest{
-            Long: id
+            Long: id (clientId)
             String: password
         }
     */
@@ -107,7 +108,6 @@ public class ClientController {
         Client clientToDelete = clientRepository.findByAuth(clientReq.getId(), clientReq.getPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
         boolean deleted = clientRepository.deleteOne(clientToDelete.getId());;
-        //LF: TODO: Cascade delete through scenarios and assets
         //LF: TODO: Encrypt reponse
         return new ResponseEntity<Boolean>(deleted, HttpStatus.OK);
     }
@@ -124,8 +124,8 @@ public class ClientController {
     @PostMapping("/api/clients")
     public ResponseEntity<ClientReturn> createOne(@Validated({ClientRequest.RegisterCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
-        Client clientCheck = clientRepository.findDuplicateEmail(clientReq.getEmail()).or(() -> clientRepository.findDuplicateName(clientReq.getName())).orElse(null);
-        if (clientCheck != null) throw new DuplicateEntryException("Client already exists with one or more of provided values:\n" + clientReq.getName() + "\n" + clientReq.getEmail());
+        Client clientCheck = clientRepository.findDuplicate(clientReq.getEmail(), clientReq.getName())
+            .orElseThrow(() -> new DuplicateEntryException("Client already exists with one or more of provided values:\n" + clientReq.getName() + "\n" + clientReq.getEmail()));
         //LF: TODO: Encrypt before storage
         clientCheck = clientRepository.save(new Client(clientReq.getName(), clientReq.getEmail(), clientReq.getPhone(), clientReq.getPassword()));
         //LF: TODO: Encrypt reponse
@@ -155,7 +155,7 @@ public class ClientController {
     @PostMapping("/api/clients/get-advisor-clients")
     public ResponseEntity<List<Client>> getClients(@Validated({ClientRequest.AuthCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
-        Client clientCheck = clientRepository.findByAuth(clientReq.getId(), clientReq.getPassword())
+        Client clientCheck = clientRepository.findByClientAuth(clientReq.getId(), clientReq.getPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
         //LF: TODO: Encrypt reponse
         return new ResponseEntity<List<Client>>(clientRepository.findAdvisorClients(clientCheck.getId())
@@ -172,10 +172,10 @@ public class ClientController {
     @PostMapping("/api/clients/get-hash")
     public ResponseEntity<String> getHash(@Validated({ClientRequest.AuthCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
-        Client clientCheck = clientRepository.findByAuth(clientReq.getId(), clientReq.getPassword())
+        Client clientCheck = clientRepository.findByClientAuth(clientReq.getId(), clientReq.getPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
-        //LF: TODO: Some sort of way to generate a hash
-        String advisorHash = clientCheck.getId() + "-SomeRandomHash";
+        //LF: Generate an advisorHash for this client to give to a client who wishes to add this client as an advisor. The hash is generated using a random UUID.
+        String advisorHash = java.util.UUID.randomUUID().toString();//The chance of a collision is astronomically low and this isn't a hash critical to function so this will be fine.
         clientCheck = clientRepository.save(new Client(clientCheck.getId(), clientCheck.getAdvisor(), advisorHash, clientReq.getName(), clientReq.getEmail(), clientReq.getPhone(), clientReq.getSecondPassword()));
         //LF: TODO: Encrypt reponse
         return new ResponseEntity<String>(clientCheck.getHash(), HttpStatus.OK);
@@ -189,13 +189,13 @@ public class ClientController {
         }
     */
     @PostMapping("/api/clients/remove-hash")
-    public ResponseEntity<String> removeHash(@Validated({ClientRequest.AuthCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
+    public ResponseEntity<Boolean> removeHash(@Validated({ClientRequest.AuthCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
-        Client clientCheck = clientRepository.findByAuth(clientReq.getId(), clientReq.getPassword())
+        Client clientCheck = clientRepository.findByClientAuth(clientReq.getId(), clientReq.getPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
         clientCheck = clientRepository.save(new Client(clientCheck.getId(), clientCheck.getAdvisor(), null, clientReq.getName(), clientReq.getEmail(), clientReq.getPhone(), clientReq.getSecondPassword()));
-        //LF: TODO: Encrypt reponse, or remove response as we only really need the HttpStatus. Should always return null as hash
-        return new ResponseEntity<String>(clientCheck.getHash(), HttpStatus.OK);
+        //LF: TODO: Response encryption likely not needed.
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     //LF: Add an advisor as a client. Uses the ADVISOR client's hash. Client gets this hash off-application via communication with the advisor.
@@ -207,9 +207,9 @@ public class ClientController {
         }
     */
     @PostMapping("/api/clients/add-advisor")
-    public ResponseEntity<Boolean> addAdvisor(@Validated({ClientRequest.AuthCheck.class, ClientRequest.HashCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
+    public ResponseEntity<Client> addAdvisor(@Validated({ClientRequest.AuthCheck.class, ClientRequest.HashCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
-        Client clientCheck = clientRepository.findByAuth(clientReq.getId(), clientReq.getPassword())
+        Client clientCheck = clientRepository.findByClientAuth(clientReq.getId(), clientReq.getPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
         Client advisorCheck = clientRepository.findByHash(clientReq.getHash())
             .orElseThrow(() -> new ItemNotFoundException("Advisor using hash not found, please ask your financial advisor for another hash."));
@@ -219,9 +219,16 @@ public class ClientController {
         clientCheck = clientRepository.save(clientCheck);
         
         //LF: TODO: Encrypt reponse
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        return new ResponseEntity<Client>(clientCheck, HttpStatus.OK);
     }
 
+    //LF: Remove an advisor as a client or advisor. Maybe can be modified later to support multiple advisors per client if we choose to do so.
+    /*
+        ClientRequest{
+            Long: id (clientId if client calling this is advisor)
+            String: password (advisor password if client calling this is advisor)
+        }
+    */
     @PostMapping("/api/clients/remove-advisor")
     public ResponseEntity<Client> removeAdvisor(@Validated({ClientRequest.AuthCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
@@ -229,24 +236,7 @@ public class ClientController {
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
         clientCheck.setAdvisor(null);
         clientCheck = clientRepository.save(clientCheck);
-        //LF: TODO: Encrypt reponse, or remove response as we only really need the HttpStatus. Should always return null as hash
+        //LF: TODO: Encrypt reponse
         return new ResponseEntity<Client>(clientCheck, HttpStatus.OK);
-    }
-
-    @PostMapping("/api/clients/remove-client")
-    public ResponseEntity<Boolean> removeClient(@Validated({ClientRequest.AuthCheck.class, ClientRequest.AdvisorCheck.class}) @RequestBody ClientRequest clientReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
-        //LF: TODO: Decrypt request
-        Client advisorCheck = clientRepository.findByAuth(clientReq.getId(), clientReq.getPassword())
-            .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
-        Client clientCheck = clientRepository.findById(clientReq.getClientId())
-            .orElseThrow(() -> new ItemNotFoundException("Search for Client using provided Id not found. ID: " + clientReq.getId()));
-        if(clientCheck.getAdvisor() != advisorCheck){
-            throw new UnauthorizedException("Client provided is not a client of this advisor. ID: " + clientReq.getId());
-        }
-        clientCheck.setAdvisor(null);
-        clientRepository.save(clientCheck);
-        
-        //LF: TODO: Encrypt reponse, or remove response as we only really need the HttpStatus. Should always return null as hash
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }

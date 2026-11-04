@@ -4,10 +4,10 @@ INSERT INTO Client (Name, Email, Phone, Password)
 INSERT INTO Client (Name, Advisor_ID, Email, Phone, Password)
     VALUES ('John Doe', 1, 'john.doe@example.com', '(555)555-5555', 'password123');
 
-INSERT INTO Scenario (Client_ID, Name, Description)
-    VALUES (1, 'Investment Plan', 'Jane Smith needs to Jane Invest.');
-INSERT INTO Scenario (Client_ID, Name, Description)
-    VALUES (2, 'Retirement Plan', 'John Doe needs to John Retire.');
+INSERT INTO Scenario (Client_ID, Name, Description, Locked)
+    VALUES (1, 'Investment Plan', 'Jane Smith needs to Jane Invest.', false);
+INSERT INTO Scenario (Client_ID, Name, Description, Locked)
+    VALUES (2, 'Retirement Plan', 'John Doe needs to John Retire.', false);
 
 INSERT INTO Asset (Scenario_ID, Name, Description, Worth, APR, Mortgage, Interest)
     VALUES (1, 'Stocks', 'Tech Stocks', '100000', '7.0', '0', '0');

@@ -1,6 +1,6 @@
 package ca.fanshawec.capstone.server.exception;
 
-//LF: TODO: Deprecated at the moment. Will add back once advisor handling and scenario locking is implemented.
+//LF: TODO: Almost deprecated at the moment. Will add back once advisor handling and scenario locking is implemented.
 public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException(){
         super();

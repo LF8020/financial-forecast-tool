@@ -11,6 +11,7 @@ import ca.fanshawec.capstone.server.client.ClientRepository;
 import ca.fanshawec.capstone.server.exception.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/scenarios")
@@ -29,21 +30,20 @@ public class ScenarioController {
     /*
         AssetRequest{
             Long: Id  (scenarioId)
-            Long: clientId
-            String: clientPassword
+            Long: clientId (will be id of the advisor's client if the client is an advisor)
+            String: clientPassword (or advisor password if the client is an advisor)
             String: name
             String: description
         }
     */
     @PutMapping
-    public ResponseEntity<ScenarioReturn> updateOne(@Validated({ScenarioRequest.AuthCheck.class, ScenarioRequest.UpdateCheck.class, ScenarioRequest.IdCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
+    public ResponseEntity<ScenarioReturn> updateOne(@Validated({ScenarioRequest.AuthCheck.class, ScenarioRequest.UpdateCheck.class, ScenarioRequest.IdCheck.class}) @RequestBody ScenarioRequest scenarioReq) {
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
-        Scenario scenarioCheck = scenarioRepository.findByClient(scenarioReq.getId(), clientCheck.getId())
+        Scenario scenarioCheck = scenarioRepository.findById(scenarioReq.getId(), clientCheck.getPassword() != scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + scenarioReq.getId()));
-        scenarioCheck = scenarioRepository.save(new Scenario(scenarioCheck.getId(), scenarioCheck.getClient(), scenarioReq.getName(), scenarioReq.getDescription()));
+        scenarioCheck = scenarioRepository.save(new Scenario(scenarioCheck.getId(), scenarioCheck.getClient(), scenarioReq.getName(), scenarioReq.getDescription(), scenarioCheck.getLocked()));
         ScenarioReturn returnScenario = new ScenarioReturn(scenarioCheck.getId(), scenarioCheck.getName(), scenarioCheck.getDescription());
         //LF: TODO: Encrypt Response
         return new ResponseEntity<ScenarioReturn>(returnScenario, HttpStatus.OK);
@@ -53,17 +53,16 @@ public class ScenarioController {
     /*
         AssetRequest{
             Long: Id  (scenarioId)
-            Long: clientId
-            String: clientPassword
+            Long: clientId (will be id of the advisor's client if the client is an advisor)
+            String: clientPassword (or advisor password if the client is an advisor)
         }
     */
     @DeleteMapping("/api/scenarios")
-    public ResponseEntity<Boolean> deleteOne(@Validated({ScenarioRequest.IdCheck.class, ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
+    public ResponseEntity<Boolean> deleteOne(@Validated({ScenarioRequest.IdCheck.class, ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
-        Scenario scenarioCheck = scenarioRepository.findByClient(scenarioReq.getId(), clientCheck.getId())
+        Scenario scenarioCheck = scenarioRepository.findById(scenarioReq.getId(), clientCheck.getPassword() != scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + scenarioReq.getId()));
         boolean deleted = scenarioRepository.delete(scenarioCheck.getId());
         //LF: TODO: Encrypt response? Maybe? Probably not.
@@ -73,19 +72,19 @@ public class ScenarioController {
     //LF: Creates an individual scenario. Explicitly requires:
     /*
         AssetRequest{
-            Long: clientId
-            String: clientPassword
+            Long: clientId (will be id of the advisor's client if the client is an advisor)
+            String: clientPassword (or advisor password if the client is an advisor)
             String: name
             String: description
+            Boolean: locked
         }
     */
     @PostMapping("/api/scenarios")
-    public ResponseEntity<ScenarioReturn> createOne(@Validated({ScenarioRequest.AuthCheck.class, ScenarioRequest.UpdateCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid scenarios. Password should be encrypted using X25519MLKEM768.
+    public ResponseEntity<ScenarioReturn> createOne(@Validated({ScenarioRequest.AuthCheck.class, ScenarioRequest.UpdateCheck.class, ScenarioRequest.CreateCheck.class}) @RequestBody ScenarioRequest scenarioReq) {
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
-        Scenario newScenario = scenarioRepository.save(new Scenario(clientCheck, scenarioReq.getName(), scenarioReq.getDescription()));
+        Scenario newScenario = scenarioRepository.save(new Scenario(clientCheck, scenarioReq.getName(), scenarioReq.getDescription(), scenarioReq.getLocked()));
         ScenarioReturn returnScenario = new ScenarioReturn(newScenario.getId(), newScenario.getName(), newScenario.getDescription());
         //LF: TODO: Encrypt response
         return new ResponseEntity<ScenarioReturn>(returnScenario, HttpStatus.OK);
@@ -94,18 +93,42 @@ public class ScenarioController {
     //LF: Gets all scenarios associated with a client. Explicitly requires:
     /*
         AssetRequest{
+            Long: clientId (will be id of the advisor's client if the client is an advisor)
+            String: clientPassword (advisor password if the client is an advisor)
+        }
+    */
+    @PostMapping("/api/scenarios/get")
+    public ResponseEntity<List<ScenarioReturn>> getScenarios(@Validated({ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {
+        //LF: TODO: Decrypt request
+        Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
+            .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
+        List<ScenarioReturn> scenarioList = scenarioRepository.findAllById(scenarioReq.getClientId(), clientCheck.getPassword() != scenarioReq.getClientPassword()).orElse(Collections.emptyList());
+        //LF: TODO: Encrypt reponse
+        return new ResponseEntity<List<ScenarioReturn>>(scenarioList, HttpStatus.OK);        
+    }
+
+    //LF: Locks a scenario to hide it from advisors, advisors can not call this for clients for obvious reasons. 
+    //    Explicitly requires:
+    /*
+        AssetRequest{
             Long: clientId
             String: clientPassword
         }
     */
-    @PostMapping("/api/scenarios/get")
-    public ResponseEntity<List<ScenarioReturn>> getScenarios(@Validated({ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
+    @PostMapping("/api/scenarios/lock")
+    public ResponseEntity<Boolean> lockScenario(@Validated({ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {
         //LF: TODO: Decrypt request
-        //LF: TODO: Add advisor handling
-        Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
+        clientRepository.findByClientAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
-        List<ScenarioReturn> scenarioList = scenarioRepository.findScenariosById(clientCheck.getId()).orElse(Collections.emptyList());
-        //LF: TODO: Encrypt reponse
-        return new ResponseEntity<List<ScenarioReturn>>(scenarioList, HttpStatus.OK);        
+        Scenario scenarioCheck = scenarioRepository.findById(scenarioReq.getId(), false)
+            .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + scenarioReq.getId()));
+        
+        if(scenarioCheck.getLocked()) scenarioCheck.setLocked(false);
+        else scenarioCheck.setLocked(true);
+
+        scenarioRepository.save(scenarioCheck);
+        //LF: TODO: Encryption of response likely not needed.
+        return new ResponseEntity<Boolean>(scenarioCheck.getLocked(), HttpStatus.OK);
     }
+    
 }
