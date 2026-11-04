@@ -51,6 +51,7 @@ public class AssetController {
     public ResponseEntity<AssetReturn> updateOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class, AssetRequest.UpdateCheck.class}) @PathVariable AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
         //LF: TODO: Add advisor handling
+        //LF: TODO: Add SQL injection prevention
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
         Scenario scenarioCheck = scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
@@ -74,6 +75,7 @@ public class AssetController {
     public ResponseEntity<Boolean> deleteOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class}) @PathVariable AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
         //LF: TODO: Add advisor handling
+        //LF: TODO: Add SQL injection prevention for assetReq.getClientPassword()
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
         scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
@@ -100,6 +102,7 @@ public class AssetController {
     @PostMapping("/api/assets")
     public ResponseEntity<AssetReturn> createOne(@Validated({AssetRequest.AuthCheck.class, AssetRequest.UpdateCheck.class}) @RequestBody AssetRequest assetReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid scenarios. Password should be encrypted using X25519MLKEM768.
         //LF: TODO: Decrypt request
+        //LF: TODO: Add SQL injection prevention
         //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
@@ -131,6 +134,7 @@ public class AssetController {
     @PostMapping("/api/assets/get")
     public ResponseEntity<List<AssetReturn>> getScenarios(@Validated({AssetRequest.AuthCheck.class, AssetRequest.InfoCheck.class}) @RequestBody AssetRequest assetReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
+        //LF: TODO: Add SQL injection prevention for assetReq.getClientPassword()
         //LF: TODO: Add advisor handling
         clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));

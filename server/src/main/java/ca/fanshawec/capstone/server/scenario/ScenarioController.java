@@ -38,6 +38,7 @@ public class ScenarioController {
     @PutMapping
     public ResponseEntity<ScenarioReturn> updateOne(@Validated({ScenarioRequest.AuthCheck.class, ScenarioRequest.UpdateCheck.class, ScenarioRequest.IdCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
+        //LF: TODO: Add SQL injection prevention for scenarioReq.getClientPassword(), scenarioReq.getName(), scenarioReq.getDescription()
         //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
@@ -60,6 +61,7 @@ public class ScenarioController {
     @DeleteMapping("/api/scenarios")
     public ResponseEntity<Boolean> deleteOne(@Validated({ScenarioRequest.IdCheck.class, ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
+        //LF: TODO: Add SQL injection prevention for scenarioReq.getClientPassword()
         //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
@@ -82,6 +84,7 @@ public class ScenarioController {
     @PostMapping("/api/scenarios")
     public ResponseEntity<ScenarioReturn> createOne(@Validated({ScenarioRequest.AuthCheck.class, ScenarioRequest.UpdateCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid scenarios. Password should be encrypted using X25519MLKEM768.
         //LF: TODO: Decrypt request
+        //LF: TODO: Add SQL injection prevention for scenarioReq.getClientPassword(), scenarioReq.getName(), scenarioReq.getDescription()
         //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
@@ -101,6 +104,7 @@ public class ScenarioController {
     @PostMapping("/api/scenarios/get")
     public ResponseEntity<List<ScenarioReturn>> getScenarios(@Validated({ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {//LF: Input validation and sanitization is needed here to prevent bad actors from creating invalid clients. Password should be encrypted in storage and in transit using X25519MLKEM768.
         //LF: TODO: Decrypt request
+        //LF: TODO: Add SQL injection prevention for scenarioReq.getClientPassword()
         //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
