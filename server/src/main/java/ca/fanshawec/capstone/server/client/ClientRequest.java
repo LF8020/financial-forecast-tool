@@ -2,6 +2,7 @@ package ca.fanshawec.capstone.server.client;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,6 +25,8 @@ public class ClientRequest {
     @Email(message = "Email must be in the \"*@*.*\" format.", groups = {FullCheck.class, LoginCheck.class, RegisterCheck.class})
     private String email;
     @NotBlank(message = "Phone must not be blank", groups = {FullCheck.class, RegisterCheck.class})
+    //LF: Phone number must be in a format from '+1 (123) 456-7890' to '+999 (999) 999-9999'
+    @Pattern(regexp = "^\\+[0-9]{1,3} \\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$", message = "Phone number must be in the correct format from '+0 (000) 000-0000' to '+999 (999) 999-9999'.", groups = {FullCheck.class, RegisterCheck.class})
     private String phone;
     @Size(min = 5, max = 99, message = "Password must be longer than 4 characters and shorter than 100", groups = {FullCheck.class, LoginCheck.class, AuthCheck.class, RegisterCheck.class})
     @NotBlank(message = "Password must not be blank", groups = {FullCheck.class, LoginCheck.class, AuthCheck.class, RegisterCheck.class})
