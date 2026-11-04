@@ -1,0 +1,88 @@
+.home-page {
+    min-height: 100vh;
+    padding: 40px 16px;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.home-page .content {
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+.home-page .card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: none;
+}
+
+.home-page h1,
+.home-page h2 {
+    margin-top: 0;
+}
+
+.home-page .scenario-list {
+    padding-left: 20px;
+}
+
+.home-page .scenario-list li {
+    margin-bottom: 10px;
+}
+
+.home-page .scenario-list button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.home-page .form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.home-page .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.home-page .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.home-page .button {
+    padding: 14px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.home-page .button:hover {
+    background-color: #1d4ed8;
+}
+
+.home-page .back {
+    padding: 10px 14px;
+    background-color: #64748b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
