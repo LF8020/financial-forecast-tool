@@ -102,8 +102,7 @@ public class ScenarioController {
         //LF: TODO: Decrypt request
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
-        if(clientCheck.getPassword() != scenarioReq.getClientPassword()) clientCheck = clientCheck.getAdvisor();
-        List<ScenarioReturn> scenarioList = scenarioRepository.findAllById(scenarioReq.getId(), clientCheck.getId()).orElse(Collections.emptyList());
+        List<ScenarioReturn> scenarioList = scenarioRepository.findAllById(scenarioReq.getClientId(), clientCheck.getPassword() != scenarioReq.getClientPassword()).orElse(Collections.emptyList());
         //LF: TODO: Encrypt reponse
         return new ResponseEntity<List<ScenarioReturn>>(scenarioList, HttpStatus.OK);        
     }
