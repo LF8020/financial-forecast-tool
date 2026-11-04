@@ -5,8 +5,8 @@ import './App.css'
 import Login from './Login/Login.tsx';
 
 import type { Client } from './types';
-import Home from './Home.tsx';
-import {  BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import Home from './Home/Home.tsx';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import Scenario from './Scenario/Scenario.tsx';
 
 function AppContent() {
@@ -14,7 +14,7 @@ function AppContent() {
 
   const navigate = useNavigate();
 
-  if(!client) {
+  if (!client || client.id == null) {
     return <Login onLoginSuccess={(clientData) => {
       setClient(clientData);
       navigate('/');
@@ -23,20 +23,29 @@ function AppContent() {
 
   return (
     <div className="App">
+      <div className="app-menu">
+        <button onClick={() => navigate('/')}>Home</button>
+        <button onClick={() => setClient(null)}>Logout</button>
+      </div>
+
       <Routes>
-        <Route 
+        <Route
           path="/"
           element={
-            <div>
-              <Home client={{ clientId: client.id, clientPassword: client.password }} />
-              <button onClick={() => setClient(null)}>Logout</button>
-            </div>
+            <Home client={{
+              clientId: client.id,
+              clientPassword: client.password,
+              clientName: client.name
+            }} />
           }
         />
-        <Route 
+        <Route
           path="/scenario/:id"
           element={
-            <Scenario client={{ clientId: client.id, clientPassword: client.password }} />
+            <Scenario client={{
+              clientId: client.id,
+              clientPassword: client.password
+            }} />
           }
         />
       </Routes>
