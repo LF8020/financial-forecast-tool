@@ -5,7 +5,7 @@ import './App.css'
 import Login from './Login/Login.tsx';
 
 import type { Client } from './types';
-import Home from './Home/Home.tsx';
+import Home from './HomePage/Home.tsx';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import Scenario from './Scenario/Scenario.tsx';
 
@@ -43,8 +43,8 @@ function AppContent() {
           path="/scenario/:id"
           element={
             <Scenario client={{
-              clientId: client.id,
-              clientPassword: client.password
+              id: client.id,
+              password: client.password
             }} />
           }
         />

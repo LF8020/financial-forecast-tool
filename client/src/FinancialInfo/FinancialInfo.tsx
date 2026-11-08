@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './FinancialInfo.css';
 
-import type { Asset } from '../types';
+import type { Asset, Scenario } from '../types';
 
-export default function FinancialInfo({ client, scenarioId }) {
+
+
+export default function FinancialInfo({ client, scenario }: { client: { id: number, password: string }, scenario: Scenario }) {
     const navigate = useNavigate();
 
     const [assets, setAssets] = useState<Asset[]>([]);
@@ -21,9 +23,9 @@ export default function FinancialInfo({ client, scenarioId }) {
         const fetchAssets = async () => {
             try {
                 const payload = {
-                    clientId: client.clientId,
-                    clientPassword: client.clientPassword,
-                    scenarioId: scenarioId
+                    clientId: client.id,
+                    clientPassword: client.password,
+                    scenarioId: scenario.id
                 };
                 const response = await fetch('http://localhost:8080/api/assets/api/assets/get', {
                     method: 'POST',
@@ -40,7 +42,7 @@ export default function FinancialInfo({ client, scenarioId }) {
             }
         }
         fetchAssets();
-    }, [client, scenarioId]);
+    }, [client, scenario.id]);
 
 
     let totalWorth = 0;
@@ -84,8 +86,8 @@ export default function FinancialInfo({ client, scenarioId }) {
                 <button className="back" type="button" onClick={() => navigate('/')}>Back to Home</button>
 
                 <div className="card">
-                    <h1>Financial Information</h1>
-                    <p>Sample assets for testing the client page.</p>
+                    <h3>{scenario.name}</h3>
+                    <p>{scenario.description}</p>
 
                     <div className="table-wrap">
                         <table>
