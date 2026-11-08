@@ -44,6 +44,8 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
         fetchAssets();
     }, [client, scenario.id]);
 
+    
+
 
     let totalWorth = 0;
     let totalMortgage = 0;
@@ -53,26 +55,50 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
         totalMortgage += assets[i].mortgage;
     }
 
-    const addAsset = () => {
+    const addAsset = async () => {
         if (name.trim() === '') return;
 
-        const newAsset: Asset = {
-            id: Date.now(),
-            name: name.trim(),
-            description: description.trim(),
-            worth: Number(worth),
-            apr: Number(apr),
-            mortgage: Number(mortgage),
-            interest: Number(interest),
-        };
+        try {
 
-        setAssets([...assets, newAsset]);
-        setName('');
-        setDescription('');
-        setWorth('');
-        setApr('');
-        setMortgage('');
-        setInterest('');
+            const payload = {
+                clientId: client.id,
+                    clientPassword: client.password,
+                    scenarioId: scenario.id,
+                    name: name.trim(),
+                    description: description.trim(),
+                    worth: Number(worth),
+                    apr: Number(apr),
+                    mortgage: Number(mortgage),
+                    interest: Number(interest)
+            }
+            console.log('Adding asset with payload:', payload);
+            const response = await fetch('http://localhost:8080/api/assets/api/assets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                const createdAsset = await response.json();
+                setAssets(prevAssets => [...prevAssets, createdAsset]);
+
+                setName('');
+                setDescription('');
+                setWorth('');
+                setApr('');
+                setMortgage('');
+                setInterest('');
+            } else {
+                console.error('Failed to add asset');
+            }
+
+        } catch (error) {
+            console.error('Error adding asset:', error);
+        }
+        
+
     };
 
     const removeAsset = (id: number) => {
@@ -84,7 +110,8 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
             <div className="content">
                 
                 <button className="back" type="button" onClick={() => navigate('/')}>Back to Home</button>
-
+                {/*<button className="back" style={{ backgroundColor: 'red', marginLeft: '10px' }} type="button" onClick={() => handleDeleteScenario()}>Delete Scenario</button>
+        */}
                 <div className="card">
                     <h3>{scenario.name}</h3>
                     <p>{scenario.description}</p>
