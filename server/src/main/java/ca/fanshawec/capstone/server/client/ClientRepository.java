@@ -21,20 +21,25 @@ public interface ClientRepository extends CrudRepository<Client, Long> {
     @Query("SELECT c FROM Client c WHERE c.email = ?1 AND c.password = ?2")
     java.util.Optional<Client> findByLogin(String email, String password);
 
-    //LF: Find clients by their auth. Inputs id and password and checks it against all clients, 
-    //    if no client has both values then it fails the authentication
-    @Query("SELECT c FROM Client c WHERE ID = ?1 AND c.password = ?2")
+    //LF: Find clients by their id and password or their id and their advisor's password. 
+    //    if no client or advisor has both values then it fails the authentication
+    @Query("SELECT c FROM Client c WHERE ID = ?1 AND c.password = ?2 OR ID = ?1 AND c.advisor.password = ?2")
     java.util.Optional<Client> findByAuth(Long id, String password);
 
-    //LF: Find clients by email, this is mainly to check for duplicate emails before adding.
-    @Query("SELECT c FROM Client c WHERE c.email = ?1")
-    java.util.Optional<Client> findDuplicateEmail(String email);
+    //LF: Find clients by their id and password
+    //    if no client or advisor has both values then it fails the authentication
+    @Query("SELECT c FROM Client c WHERE ID = ?1 AND c.password = ?2")
+    java.util.Optional<Client> findByClientAuth(Long id, String password);
 
-    //LF: Find clients by name, this is mainly to check for duplicate names before adding.
-    @Query("SELECT c FROM Client c WHERE c.name = ?1")
-    java.util.Optional<Client> findDuplicateName(String name);
+    //LF: Find clients by email, this is mainly to check for duplicate emails before adding.
+    @Query("SELECT c FROM Client c WHERE c.email = ?1 AND c.name = ?2")
+    java.util.Optional<Client> findDuplicate(String email, String name);
 
     //LF: Find clients by advisorId, this will return a list of all clients with that clientId as their advisor.
     @Query("SELECT c FROM Client c WHERE c.advisor.id = ?1")
     java.util.Optional<List<Client>> findAdvisorClients(long advisorId);
+
+    //LF: Find client advisors by hash, this will return a list any advisor currently using that hash with no duplicates.
+    @Query("SELECT c FROM Client c WHERE c.advisor.hash = ?1")
+    java.util.Optional<Client> findByHash(String advisorHash);
 }

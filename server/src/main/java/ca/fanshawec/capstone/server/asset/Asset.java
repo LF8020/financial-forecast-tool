@@ -21,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 @AllArgsConstructor 
 //LF: Class for Asset, which holds all the data pertaining to each individual financial asset in a scenario.
 //    Has a many-to-one relationship from here to Scenario.
+//    Assets as a whole will likely be modified or split in the future to acoomodate multiple asset types much cleaner compared to how it's implemented currently and opens the door for more customization.
 public class Asset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

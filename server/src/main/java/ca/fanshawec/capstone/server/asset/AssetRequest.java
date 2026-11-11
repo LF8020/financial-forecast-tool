@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 //LF: AssetRequest class, this class helps automate some error handling and authentication on inputs.
 //    I may come back to this in the future to make my own authentication and remodel this to be compatible with encryption.
+
+//LF: Assets as a whole will likely be modified or split in the future to acoomodate multiple asset types.
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Value 
 @AllArgsConstructor

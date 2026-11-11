@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import org.hibernate.annotations.OnDelete;
+
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +30,9 @@ public class Client {
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "advisor_id", nullable = true)
+    @OnDelete(action = org.hibernate.annotations.OnDeleteAction.SET_NULL)
     private Client advisor;
+    private String hash;
     @Nonnull
     private String name;
     @Nonnull 

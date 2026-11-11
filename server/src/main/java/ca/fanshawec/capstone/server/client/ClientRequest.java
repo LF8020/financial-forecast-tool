@@ -2,10 +2,10 @@ package ca.fanshawec.capstone.server.client;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 
 //LF: ClientRequest class, this class helps automate some error handling and authentication on inputs.
 //    I may come back to this in the future to make my own authentication and remodel this to be compatible with encryption.
@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ClientRequest {
     @NotBlank(message = "Id must not be blank", groups = {FullCheck.class, AuthCheck.class})
     private Long id;
+    @NotBlank(message = "clientId must not be blank", groups = {AdvisorCheck.class})
+    private Long clientId;
     @Size(min = 5, max = 99, message = "Name must be longer than 4 characters and shorter than 100", groups = {FullCheck.class, RegisterCheck.class})
     @NotBlank(message = "Name must not be blank", groups = {FullCheck.class, RegisterCheck.class})
     private String name;
@@ -23,6 +25,8 @@ public class ClientRequest {
     @Email(message = "Email must be in the \"*@*.*\" format.", groups = {FullCheck.class, LoginCheck.class, RegisterCheck.class})
     private String email;
     @NotBlank(message = "Phone must not be blank", groups = {FullCheck.class, RegisterCheck.class})
+    //LF: Phone number must be in a format from '+1 (123) 456-7890' to '+999 (999) 999-9999'
+    @Pattern(regexp = "^\\+[0-9]{1,3} \\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$", message = "Phone number must be in the correct format from '+0 (000) 000-0000' to '+999 (999) 999-9999'.", groups = {FullCheck.class, RegisterCheck.class})
     private String phone;
     @Size(min = 5, max = 99, message = "Password must be longer than 4 characters and shorter than 100", groups = {FullCheck.class, LoginCheck.class, AuthCheck.class, RegisterCheck.class})
     @NotBlank(message = "Password must not be blank", groups = {FullCheck.class, LoginCheck.class, AuthCheck.class, RegisterCheck.class})
@@ -30,9 +34,14 @@ public class ClientRequest {
     @Size(min = 5, max = 99, message = "Password must be longer than 4 characters and shorter than 100", groups = FullCheck.class)
     @NotBlank(message = "Password must not be blank", groups = FullCheck.class)
     private String secondPassword;
+    @Size(min = 5, max = 99, message = "Hash must be longer than 2 characters and shorter than 256", groups = HashCheck.class)
+    @NotBlank(message = "Hash must not be blank", groups = HashCheck.class)
+    private String hash;
 
     public interface LoginCheck {}
     public interface RegisterCheck {}
     public interface FullCheck {}
     public interface AuthCheck {}
+    public interface HashCheck {}
+    public interface AdvisorCheck {}
 }

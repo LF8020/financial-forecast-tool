@@ -68,7 +68,6 @@ public class ServerExceptionHandler{
     }
 
     //LF: Handles Unauthorized exception thrown when scenarios are accessed without the proper credentials.
-    //TODO: Deprecated at the moment but will be added back with Advisor handling. 
     @ExceptionHandler (UnauthorizedException.class)
     public ResponseEntity<APIError> handleNotFound(
             UnauthorizedException ex, HttpServletRequest request) {
