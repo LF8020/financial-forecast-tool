@@ -88,7 +88,7 @@ export default function Home({ client }: { client: { clientId: number; clientPas
 
     //open scenario
     const handleScenarioClick = (scenario: Scenario) => {
-        navigate(`/scenario/${scenario.id}`);
+        navigate(`/scenario/${scenario.id}`, { state: { scenario } });
     };
 
 

@@ -43,8 +43,8 @@ function AppContent() {
           path="/scenario/:id"
           element={
             <Scenario client={{
-              clientId: client.id,
-              clientPassword: client.password
+              id: client.id,
+              password: client.password
             }} />
           }
         />

@@ -2,6 +2,7 @@ package ca.fanshawec.capstone.server.asset;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import ca.fanshawec.capstone.server.scenario.Scenario;
@@ -15,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 @Data
+@NoArgsConstructor 
 @RequiredArgsConstructor
 @AllArgsConstructor 
 //LF: Class for Asset, which holds all the data pertaining to each individual financial asset in a scenario.

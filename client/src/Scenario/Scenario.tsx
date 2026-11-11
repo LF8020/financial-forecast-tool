@@ -1,14 +1,19 @@
 
+import type { Scenario } from "../types";
 
-import { useParams } from "react-router-dom";
 import FinancialInfo from "../FinancialInfo/FinancialInfo";
 
-export default function Scenario({ client }: { client: { clientId: number; clientPassword: string } }) {
-    const { id } = useParams();
+import { useLocation } from "react-router-dom";
+
+export default function Scenario({ client }: { client: { id: number; password: string } }) {
+    
+    const location = useLocation();
+
+    const scenario = location.state?.scenario as Scenario;
 
     return (
         <div>
-            <FinancialInfo client={client} scenarioId={Number(id)} />
+            <FinancialInfo client={client} scenario={scenario} />
         </div>
     )
 }
