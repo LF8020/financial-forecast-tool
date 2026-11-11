@@ -70,14 +70,15 @@ public class AssetController {
         }
     */
     @DeleteMapping("/api/assets")
-    public ResponseEntity<Boolean> deleteOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class}) @PathVariable AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
+    public ResponseEntity<Boolean> deleteOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class}) @RequestBody AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
         //LF: TODO: Add advisor handling
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
         scenarioRepository.findByClient(assetReq.getScenarioId(), clientCheck.getId())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + assetReq.getScenarioId()));
-        boolean deleted = assetRepository.delete(assetReq.getId());
+        int deletedCount = assetRepository.delete(assetReq.getId());
+        boolean deleted = deletedCount > 0;
         //LF: TODO: Encrypt response? Maybe? Probably not.
         return new ResponseEntity<Boolean>(deleted, HttpStatus.OK);
     }

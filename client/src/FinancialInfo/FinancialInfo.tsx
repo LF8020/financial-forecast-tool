@@ -101,8 +101,31 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
 
     };
 
-    const removeAsset = (id: number) => {
-        setAssets(assets.filter((asset) => asset.id !== id));
+    const removeAsset = async (id: number) => {
+        const payload = {
+            clientId: client.id,
+            clientPassword: client.password,
+            id: id, 
+            scenarioId: scenario.id
+        }
+        console.log('Removing asset with payload:', payload);
+        try {
+            const response = await fetch(`http://localhost:8080/api/assets/api/assets`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)   
+            });
+
+            if (response.ok) {
+                setAssets(prevAssets => prevAssets.filter((asset) => asset.id !== id));
+            } else {
+                console.error('Failed to remove asset');
+            }
+        } catch (error) {
+            console.error('Error removing asset:', error);
+        }
     };
 
     return (

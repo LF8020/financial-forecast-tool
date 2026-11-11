@@ -15,7 +15,7 @@ public interface AssetRepository extends CrudRepository<Asset, Long> {
     @Modifying
     @Transactional
     @Query("DELETE from Asset WHERE ID = ?1")
-    boolean delete(Long ID);
+    int delete(Long ID);
 
     //LF: Query to find all assets which have the scenarioId of the input
     @Query("SELECT a from Asset a WHERE a.scenario.id = ?1")
