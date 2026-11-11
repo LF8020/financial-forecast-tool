@@ -48,7 +48,7 @@ public class AssetController {
         }
     */
     @PutMapping
-    public ResponseEntity<AssetReturn> updateOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class, AssetRequest.UpdateCheck.class}) @PathVariable AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
+    public ResponseEntity<AssetReturn> updateOne(@Validated({AssetRequest.IdCheck.class, AssetRequest.AuthCheck.class, AssetRequest.UpdateCheck.class}) @RequestBody AssetRequest assetReq) {//LF: Likely needs some sort of validation to prevent malicious deletions by bad actors and a way to delete assets associated with the scenario.
         //LF: TODO: Decrypt request
         Client clientCheck = clientRepository.findByAuth(assetReq.getClientId(), assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
