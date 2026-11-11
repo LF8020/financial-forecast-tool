@@ -76,8 +76,7 @@ public class AssetController {
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + assetReq.getClientId()));
         scenarioRepository.findById(assetReq.getScenarioId(), clientCheck.getPassword() != assetReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + assetReq.getScenarioId()));
-        int deletedCount = assetRepository.delete(assetReq.getId());
-        boolean deleted = deletedCount > 0;
+        boolean deleted = assetRepository.delete(assetReq.getId(), clientCheck.getPassword() != assetReq.getClientPassword());
         //LF: TODO: Encrypt response? Maybe? Probably not.
         return new ResponseEntity<Boolean>(deleted, HttpStatus.OK);
     }
