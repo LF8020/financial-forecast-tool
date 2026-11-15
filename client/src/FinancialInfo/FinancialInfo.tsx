@@ -1,15 +1,20 @@
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import './FinancialInfo.css';
 
 import type { Asset, Scenario } from '../types';
 
 
 
-export default function FinancialInfo({ client, scenario }: { client: { id: number, password: string }, scenario: Scenario }) {
+export default function FinancialInfo() {
     const navigate = useNavigate();
+    const {id: scenarioId} = useParams();
+    const location = useLocation();
 
+    const client = location.state.client;
+
+    const [scenario, setScenario] = useState<Scenario | null>(null);
     const [assets, setAssets] = useState<Asset[]>([]);
 
     const [name, setName] = useState('');
@@ -25,7 +30,7 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
                 const payload = {
                     clientId: client.id,
                     clientPassword: client.password,
-                    scenarioId: scenario.id
+                    scenarioId: Number(scenarioId)
                 };
                 const response = await fetch('http://localhost:8080/api/assets/api/assets/get', {
                     method: 'POST',
@@ -42,7 +47,7 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
             }
         }
         fetchAssets();
-    }, [client, scenario.id]);
+    }, [client, scenarioId]);
 
     
 
@@ -63,7 +68,7 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
             const payload = {
                 clientId: client.id,
                     clientPassword: client.password,
-                    scenarioId: scenario.id,
+                    scenarioId: Number(scenarioId),
                     name: name.trim(),
                     description: description.trim(),
                     worth: Number(worth),
@@ -106,7 +111,7 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
             clientId: client.id,
             clientPassword: client.password,
             id: id, 
-            scenarioId: scenario.id
+            scenarioId: Number(scenarioId)
         }
         console.log('Removing asset with payload:', payload);
         try {
@@ -136,8 +141,8 @@ export default function FinancialInfo({ client, scenario }: { client: { id: numb
                 {/*<button className="back" style={{ backgroundColor: 'red', marginLeft: '10px' }} type="button" onClick={() => handleDeleteScenario()}>Delete Scenario</button>
         */}
                 <div className="card">
-                    <h3>{scenario.name}</h3>
-                    <p>{scenario.description}</p>
+                    <h3>{scenario?.name}</h3>
+                    <p>{scenario?.description}</p>
 
                     <div className="table-wrap">
                         <table>
