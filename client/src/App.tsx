@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import './App.css'
 import Login from './Login/Login.tsx';
+import ClientPage from './client/client.tsx';
 
 import type { Client } from './types';
 import Home from './Homepage/Home.tsx';
@@ -47,6 +48,16 @@ function AppContent() {
               password: client.password
             }} />
           }
+        />
+
+        <Route 
+        path="/client/:id"
+        element={
+          <ClientPage client={{
+            id: client.id,
+            password: client.password
+          }} />
+        }
         />
       </Routes>
     </div>

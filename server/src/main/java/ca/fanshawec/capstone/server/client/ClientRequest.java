@@ -3,6 +3,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,9 +14,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Value 
 @AllArgsConstructor
 public class ClientRequest {
-    @NotBlank(message = "Id must not be blank", groups = {FullCheck.class, AuthCheck.class})
+    @NotNull(message = "Id must not be blank", groups = {FullCheck.class, AuthCheck.class})
     private Long id;
-    @NotBlank(message = "clientId must not be blank", groups = {AdvisorCheck.class})
+    @NotNull(message = "clientId must not be blank", groups = {AdvisorCheck.class})
     private Long clientId;
     @Size(min = 5, max = 99, message = "Name must be longer than 4 characters and shorter than 100", groups = {FullCheck.class, RegisterCheck.class})
     @NotBlank(message = "Name must not be blank", groups = {FullCheck.class, RegisterCheck.class})

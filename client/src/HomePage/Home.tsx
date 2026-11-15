@@ -1,5 +1,5 @@
 
-import type { Scenario, ScenarioRequest } from '../types';
+import type { Scenario, ScenarioRequest, Client } from '../types';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ export default function Home({ client }: { client: { clientId: number; clientPas
     const [isCreating, setIsCreating] = useState(false);
     const [newName, setNewName] = useState('');
     const [newDescription, setNewDescription] = useState('');
+    const [clients, setClients] = useState<Client[]>([]);
 
 
     //fetch scenarios
@@ -45,19 +46,48 @@ export default function Home({ client }: { client: { clientId: number; clientPas
             }
         };
 
+        const fetchClients = async () => {
+            const payload = {
+                id: client.clientId,
+                password: client.clientPassword
+            };
+            console.log('Fetching clients with payload:', payload);
+            try {
+                const response = await fetch('http://localhost:8080/api/clients/api/clients/get-advisor-clients', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                if (response.ok) {
+                    const data: Client[] = await response.json();
+                    console.log('Clients fetched successfully', data);
+                    setClients(data);
+                } else {
+                    console.error('Failed to fetch clients');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         fetchScenarios();
+        fetchClients();
     }, [client.clientId, client.clientPassword]);
 
 
     //create scenario
     const handleCreateScenario = async () => {
+        console.log('Creating scenario with name:', newName, 'and description:', newDescription);
         const payload = {
             clientId: client.clientId,
             clientPassword: client.clientPassword,
             name: newName,
-            description: newDescription
+            description: newDescription,
+            locked: false
         };
-
+        console.log('Creating scenario with payload:', payload);
         try {
             const response = await fetch('http://localhost:8080/api/scenarios/api/scenarios', {
                 method: 'POST',
@@ -91,6 +121,11 @@ export default function Home({ client }: { client: { clientId: number; clientPas
         navigate(`/scenario/${scenario.id}`, { state: { scenario } });
     };
 
+    const handleClientClick = (client: Client) => {
+        navigate(`/client/${client.id}`, { state: { client } });
+        
+    }
+
 
     return (
         <div className='home-page'>
@@ -101,6 +136,22 @@ export default function Home({ client }: { client: { clientId: number; clientPas
                     <p>Welcome, {client.clientName}!</p>
                     <p>Here are your financial scenarios.</p>
                 </div>
+                {clients.length > 0 && (
+                <div className='card'>
+                    <h2>Your Clients</h2>
+                    
+
+                    <ul className='client-list'>
+                        {clients.map((client) => (
+                            <li key={client.id}>
+                                <button type="button" onClick={() => handleClientClick(client)}>
+                                    {client.name}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                )}
 
                 <div className='card'>
                     <h2>Scenarios</h2>
@@ -150,7 +201,7 @@ export default function Home({ client }: { client: { clientId: number; clientPas
                                 />
                             </div>
 
-                            <button className='button' type="submit">Create</button>
+                            <button className='button' type="submit" >Create</button>
 
                             <button className='back' type="button" onClick={() => setIsCreating(false)}>
                                 Cancel
