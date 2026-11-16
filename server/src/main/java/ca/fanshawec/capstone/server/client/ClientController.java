@@ -103,13 +103,13 @@ public class ClientController {
         }
     */
     @DeleteMapping("/api/clients/delete")
-    public ResponseEntity<Boolean> deleteOne(@Validated({ClientRequest.AuthCheck.class}) @RequestBody ClientRequest clientReq) {
+    public ResponseEntity<Integer> deleteOne(@Validated({ClientRequest.AuthCheck.class}) @RequestBody ClientRequest clientReq) {
         //LF: TODO: Decrypt request
         Client clientToDelete = clientRepository.findByAuth(clientReq.getId(), clientReq.getPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
-        boolean deleted = clientRepository.deleteOne(clientToDelete.getId());;
+        int deleted = clientRepository.deleteOne(clientToDelete.getId());;
         //LF: TODO: Encrypt reponse
-        return new ResponseEntity<Boolean>(deleted, HttpStatus.OK);
+        return new ResponseEntity<Integer>(deleted, HttpStatus.OK);
     }
 
     //LF: Create a client. Explicitly requires:

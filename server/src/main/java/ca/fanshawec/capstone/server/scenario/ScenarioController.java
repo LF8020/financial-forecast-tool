@@ -58,15 +58,15 @@ public class ScenarioController {
         }
     */
     @DeleteMapping("/api/scenarios")
-    public ResponseEntity<Boolean> deleteOne(@Validated({ScenarioRequest.IdCheck.class, ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {
+    public ResponseEntity<Integer> deleteOne(@Validated({ScenarioRequest.IdCheck.class, ScenarioRequest.AuthCheck.class}) @RequestBody ScenarioRequest scenarioReq) {
         //LF: TODO: Decrypt request
         Client clientCheck = clientRepository.findByAuth(scenarioReq.getClientId(), scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + scenarioReq.getClientId()));
         Scenario scenarioCheck = scenarioRepository.findById(scenarioReq.getId(), clientCheck.getPassword() != scenarioReq.getClientPassword())
             .orElseThrow(() -> new ItemNotFoundException("Scenario doesn't exist or client doesn't have access. ScenarioId: " + scenarioReq.getId()));
-        boolean deleted = scenarioRepository.delete(scenarioCheck.getId());
+        int deleted = scenarioRepository.delete(scenarioCheck.getId());
         //LF: TODO: Encrypt response? Maybe? Probably not.
-        return new ResponseEntity<Boolean>(deleted, HttpStatus.OK);
+        return new ResponseEntity<Integer>(deleted, HttpStatus.OK);
     }
 
     //LF: Creates an individual scenario. Explicitly requires:
