@@ -15,7 +15,7 @@ public interface ClientRepository extends CrudRepository<Client, Long> {
     @Modifying
     @Transactional
     @Query("DELETE from Client WHERE ID = ?1")
-    boolean deleteOne(Long ID);
+    int deleteOne(Long ID);
 
     //LF: Find clients by email and password login. May need to be updated for encryption but maybe hashes passwords can be compared just fine?
     @Query("SELECT c FROM Client c WHERE c.email = ?1 AND c.password = ?2")

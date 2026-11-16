@@ -15,7 +15,7 @@ public interface ScenarioRepository extends CrudRepository<Scenario, Long> {
     @Modifying
     @Transactional
     @Query("DELETE from Scenario WHERE ID = ?1")
-    boolean delete(Long ID);
+    int delete(Long ID);
 
     //LF: Query which returns all scenarios which share the inputted clientId with some checks to see if the scenario is locked
     @Query("SELECT s FROM Scenario s WHERE s.client.id = ?1 AND ?2 = false OR s.client.id = ?1AND s.locked = false")
