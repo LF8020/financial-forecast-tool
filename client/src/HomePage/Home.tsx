@@ -11,10 +11,36 @@ export default function Home({ client }: { client: { clientId: number; clientPas
     const navigate = useNavigate();
 
     const [clients, setClients] = useState<Client[]>([]);
+    const [advisorCode, setAdvisorCode] = useState<string>('');
 
 
     //fetch scenarios
     useEffect(() => {
+
+        const fetchAdvisorCode = async () => {
+            const payload = {
+                id: client.clientId,
+                password: client.clientPassword
+            }
+            try{
+                const response = await fetch('http://localhost:8080/api/clients/api/clients/get-hash', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Advisor code fetched successfully', data);
+                    setAdvisorCode(data);
+                } else {
+                    console.error('Failed to fetch advisor code');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
        
 
         const fetchClients = async () => {
@@ -43,6 +69,7 @@ export default function Home({ client }: { client: { clientId: number; clientPas
             }
         }
         fetchClients();
+        fetchAdvisorCode();
     }, [client.clientId, client.clientPassword]);
 
 
@@ -66,8 +93,7 @@ export default function Home({ client }: { client: { clientId: number; clientPas
                 {clients.length > 0 && (
                 <div className='card'>
                     <h2>Your Clients</h2>
-                    
-
+                    <p>Advisor Code: {advisorCode}</p>
                     <ul className='client-list'>
                         {clients.map((client) => (
                             <li key={client.id}>

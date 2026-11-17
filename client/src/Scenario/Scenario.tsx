@@ -98,6 +98,32 @@ export default function Scenario({ clientid, clientPassword}: ScenarioProps) {
         });
     };
 
+    const deleteScenario = async (scenarioId: number) => {
+        const payload = {
+            id: scenarioId,
+            clientId: clientid,
+            clientPassword: clientPassword
+        }
+        try {
+            const response = await fetch(`http://localhost:8080/api/scenarios/api/scenarios`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                setScenarios(prev => prev.filter(scenario => scenario.id !== scenarioId));
+                console.log('Scenario deleted successfully');
+            } else {
+                console.error('Failed to delete scenario');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <div className='card'>
                     <h2>Scenarios</h2>
@@ -109,6 +135,9 @@ export default function Scenario({ clientid, clientPassword}: ScenarioProps) {
                             <li key={scenario.id}>
                                 <button type="button" onClick={() => handleScenarioClick(scenario)}>
                                     {scenario.name}
+                                </button>
+                                <button type="button" onClick={() => deleteScenario(scenario.id)}>
+                                    Delete
                                 </button>
                             </li>
                         ))}
