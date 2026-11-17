@@ -125,7 +125,10 @@ public class ClientController {
     public ResponseEntity<ClientReturn> createOne(@Validated({ClientRequest.RegisterCheck.class}) @RequestBody ClientRequest clientReq) {
         //LF: TODO: Decrypt request
         Client clientCheck = clientRepository.findDuplicate(clientReq.getEmail(), clientReq.getName())
-            .orElseThrow(() -> new DuplicateEntryException("Client already exists with one or more of provided values:\n" + clientReq.getName() + "\n" + clientReq.getEmail()));
+            .orElse(null);
+        if(clientCheck != null){
+            throw new DuplicateEntryException("Client already exists with one or more of provided values:\n" + clientReq.getName() + "\n" + clientReq.getEmail());
+        }
         //LF: TODO: Encrypt before storage
         clientCheck = clientRepository.save(new Client(clientReq.getName(), clientReq.getEmail(), clientReq.getPhone(), clientReq.getPassword()));
         //LF: TODO: Encrypt reponse
@@ -176,7 +179,7 @@ public class ClientController {
             .orElseThrow(() -> new ItemNotFoundException("Client not found or password authentication failed. ID: " + clientReq.getId()));
         //LF: Generate an advisorHash for this client to give to a client who wishes to add this client as an advisor. The hash is generated using a random UUID.
         String advisorHash = java.util.UUID.randomUUID().toString();//The chance of a collision is astronomically low and this isn't a hash critical to function so this will be fine.
-        clientCheck = clientRepository.save(new Client(clientCheck.getId(), clientCheck.getAdvisor(), advisorHash, clientReq.getName(), clientReq.getEmail(), clientReq.getPhone(), clientReq.getSecondPassword()));
+        clientCheck = clientRepository.save(new Client(clientCheck.getId(), clientCheck.getAdvisor(), advisorHash, clientCheck.getName(), clientCheck.getEmail(), clientCheck.getPhone(), clientCheck.getPassword()));
         //LF: TODO: Encrypt reponse
         return new ResponseEntity<String>(clientCheck.getHash(), HttpStatus.OK);
     }
