@@ -137,9 +137,6 @@ export default function FinancialInfo() {
         <div className="info-page">
             <div className="content">
                 
-                <button className="back" type="button" onClick={() => navigate('/')}>Back to Home</button>
-                {/*<button className="back" style={{ backgroundColor: 'red', marginLeft: '10px' }} type="button" onClick={() => handleDeleteScenario()}>Delete Scenario</button>
-        */}
                 <div className="card">
                     <h3>{scenario?.name}</h3>
                     <p>{scenario?.description}</p>

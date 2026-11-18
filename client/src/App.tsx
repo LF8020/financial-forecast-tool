@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import FinancialInfo from './FinancialInfo/FinancialInfo.tsx';
+import Profile from './Profile/Profile.tsx';
 
 import './App.css'
 import Login from './Login/Login.tsx';
@@ -26,6 +27,7 @@ function AppContent() {
     <div className="App">
       <div className="app-menu">
         <button onClick={() => navigate('/')}>Home</button>
+        <button onClick={() => navigate('/profile')}>Profile</button>
         <button onClick={() => setClient(null)}>Logout</button>
       </div>
 
@@ -40,6 +42,14 @@ function AppContent() {
             }} />
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <Profile
+              client={client}
+            />
+          }
+        /> 
         <Route
           path="/scenario/:id"
           element={

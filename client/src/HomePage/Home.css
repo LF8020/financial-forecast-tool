@@ -25,22 +25,10 @@
     margin-top: 0;
 }
 
-.home-page .scenario-list {
-    padding-left: 20px;
-}
 
-.home-page .scenario-list li {
-    margin-bottom: 10px;
-}
 
-.home-page .scenario-list button {
-    background: none;
-    border: none;
-    padding: 0;
-    color: #2563eb;
-    cursor: pointer;
-    font-size: 16px;
-}
+
+
 
 .home-page .form {
     display: flex;
