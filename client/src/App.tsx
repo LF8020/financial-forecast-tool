@@ -5,9 +5,10 @@ import FinancialInfo from './FinancialInfo/FinancialInfo.tsx';
 import './App.css'
 import Login from './Login/Login.tsx';
 import ClientPage from './client/client.tsx';
+import ClientDetails from './ClientDetails/ClientDetails.tsx';
 
 import type { Client } from './types';
-import Home from './Homepage/Home.tsx';
+import Home from './HomePage/Home.tsx';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 
 function AppContent() {
@@ -26,6 +27,7 @@ function AppContent() {
     <div className="App">
       <div className="app-menu">
         <button onClick={() => navigate('/')}>Home</button>
+        <button onClick={() => navigate('/client/details')}>My Details</button>
         <button onClick={() => setClient(null)}>Logout</button>
       </div>
 
@@ -47,14 +49,16 @@ function AppContent() {
           }
         />
 
-        <Route 
-        path="/client/:id"
-        element={
-          <ClientPage client={{
-            id: client.id,
-            password: client.password
-          }} />
-        }
+        <Route path="/client/details" element={<ClientDetails />} />
+
+        <Route
+          path="/client/:id"
+          element={
+            <ClientPage client={{
+              id: client.id,
+              password: client.password
+            }} />
+          }
         />
       </Routes>
     </div>
