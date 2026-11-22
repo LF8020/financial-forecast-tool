@@ -47,6 +47,7 @@ function AppContent() {
           element={
             <Profile
               client={client}
+              onClientUpdate={(updatedClient) => setClient(updatedClient)}
             />
           }
         /> 
