@@ -2,6 +2,8 @@
 import type { Scenario, ScenarioRequest } from "../types";
 import { useNavigate } from "react-router-dom";
 
+import './Scenario.css';
+
 
 import { useEffect, useState } from "react";
 
@@ -125,6 +127,7 @@ export default function Scenario({ clientid, clientPassword}: ScenarioProps) {
     };
 
     return (
+        <div className='scenario-page'>
         <div className='card'>
                     <h2>Scenarios</h2>
 
@@ -136,7 +139,7 @@ export default function Scenario({ clientid, clientPassword}: ScenarioProps) {
                                 <button type="button" onClick={() => handleScenarioClick(scenario)}>
                                     {scenario.name}
                                 </button>
-                                <button type="button" onClick={() => deleteScenario(scenario.id)}>
+                                <button className='delete-button' type="button" onClick={() => deleteScenario(scenario.id)}>
                                     Delete
                                 </button>
                             </li>
@@ -185,6 +188,7 @@ export default function Scenario({ clientid, clientPassword}: ScenarioProps) {
                         </form>
                     )}
                 </div>
+        </div>
     )
 }
     

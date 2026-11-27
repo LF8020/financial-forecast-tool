@@ -14,7 +14,7 @@ export default function Home({ client }: { client: { clientId: number; clientPas
     const [advisorCode, setAdvisorCode] = useState<string>('');
 
 
-    //fetch scenarios
+    
     useEffect(() => {
 
         const fetchAdvisorCode = async () => {

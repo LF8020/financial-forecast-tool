@@ -135,6 +135,12 @@ export default function Login({ onLoginSuccess }: { onLoginSuccess: (client: Cli
 
                         <button className='button' type="submit">Register</button>
                     </form>
+                    <div className="page-switch">
+                        <span>Already have an account?</span>
+                        <button type="button" onClick={() => setIsLogin(!isLogin)}>
+                            {isLogin ? 'Register' : 'Login'}
+                        </button>
+                    </div>
                 </div>
             )}
 
