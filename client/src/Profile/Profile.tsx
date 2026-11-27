@@ -12,58 +12,92 @@ export default function Profile({client, onClientUpdate} : ProfileProps) {
     const [name, setName] = useState(client.name);
     const [email, setEmail] = useState(client.email);
     const [phone, setPhone] = useState(client.phone);
-    const [newPassword, setNewPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
-    //const [removeAdvisor, setRemoveAdvisor] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
-    const [newClient, setNewClient] = useState(client);
+    const [saving, setSaving] = useState(false);
 
     const handleSave = async () => {
         setMessage('');
         setError('');
 
-        if (currentPassword !== client.password) {
-            setError('Current password is incorrect.');
+        if (name.trim().length < 5) {
+            setError('Enter a name of at least 5 characters.');
             return;
         }
 
-        // Update client details
-        const payload= { 
+        const payload = {
             id: client.id,
-            name: name.trim(), 
-            email: email.trim(), 
+            name: name.trim(),
+            email: email.trim(),
             phone: phone.trim(),
-            password: client.password,
-            secondPassword: newPassword ? newPassword : client.password
+            password: currentPassword,
+            secondPassword: newPassword || currentPassword
         };
-        if (newPassword) {
-            payload.password = newPassword;
-        }
 
+        setSaving(true);
         try {
             const response = await fetch('http://localhost:8080/api/clients', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload    )
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
             });
+
             if (!response.ok) {
-                throw new Error('Failed to update client.');
+                setError(response.status === 404
+                    ? 'Could not confirm account. Check current password.'
+                    : 'Could not save profile. Check entries and try again.');
+                return;
             }
-            const updatedCliend = await response.json();
-            setName(updatedCliend.name);
-            setEmail(updatedCliend.email);
-            setPhone(updatedCliend.phone);
-            setNewPassword('');
+
+            const updatedClient = await response.json();
+            onClientUpdate({ ...updatedClient, password: newPassword || currentPassword });
+            setName(updatedClient.name);
+            setEmail(updatedClient.email);
+            setPhone(updatedClient.phone);
             setCurrentPassword('');
-            setNewClient(updatedCliend);
-            onClientUpdate(updatedCliend);
-            setMessage('Changes saved successfully.');
+            setNewPassword('');
+            setMessage('Client details saved.');
+        } catch {
+            setError('Could not reach the server. Try again.');
+        } finally {
+            setSaving(false);
         }
-        catch (error) {
-            setError((error as Error).message);
+    };
+
+    const handleRemoveAdvisor = async () => {
+        setError('');
+        setMessage('');
+
+        if (!currentPassword) {
+            setError('Enter your current password to remove your advisor.');
+            return;
+        }
+
+        setSaving(true);
+        try {
+            const response = await fetch('http://localhost:8080/api/clients/api/clients/remove-advisor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: client.id,
+                    password: currentPassword
+                })
+            });
+
+            if (!response.ok) {
+                setError('Could not remove advisor. Check current password.');
+                return;
+            }
+
+            onClientUpdate({ ...client, advisor: null });
+            setCurrentPassword('');
+            setMessage('Advisor removed.');
+        } catch {
+            setError('Could not reach the server. Try again.');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -89,7 +123,9 @@ export default function Profile({client, onClientUpdate} : ProfileProps) {
 
                             <div className='form-group'>
                                 <label htmlFor="client-phone">Phone:</label>
-                                <input type="tel" id="client-phone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                                <input type="tel" id="client-phone" value={phone} onChange={(e) => setPhone(e.target.value)} 
+                                pattern={String.raw`\+[0-9]{1,3} \([0-9]{3}\) [0-9]{3}-[0-9]{4}`} aria-describedby="client-phone-format" required/>
+                                <small id="client-phone-format">Include your country code. Example: +1 (519) 555-0142.</small>
                             </div>
 
                             <div className='form-group'>
@@ -98,23 +134,24 @@ export default function Profile({client, onClientUpdate} : ProfileProps) {
                             </div>
                         </div>
 
-                        {/* <div className='advisor-section'>
-                            <h2>Advisor</h2>
-                            <p>{client.advisor || 'No advisor assigned.'}</p>
-                            {client.advisor && (
-                                <label className='advisor-option'>
-                                    <input type="checkbox" checked={removeAdvisor} onChange={(e) => setRemoveAdvisor(e.target.checked)} />
-                                    Remove advisor
-                                </label>
-                            )}
-                        </div> */}
-
                         <div className='form-group'>
                             <label htmlFor="client-current-password">Current Password:</label>
                             <input type="password" id="client-current-password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} autoComplete="current-password" required />
                         </div>
 
-                        <button className='button' type="submit">Save Changes</button>
+                        <button className='button' type="submit" disabled={saving}>Save Changes</button>
+
+                        <div className='advisor-section'>
+                            <h2>Advisor</h2>
+                            <p>{client.advisor?.name || 'No advisor assigned.'}</p>
+
+                            {client.advisor && (
+                                <button className='button' type="button" onClick={handleRemoveAdvisor} disabled={saving}>
+                                    Remove Advisor
+                                </button>
+                            )}
+                        </div>
+
                         {error && <p className='error' role="alert">{error}</p>}
                         {message && <p className='success' role="status">{message}</p>}
                     </form>
@@ -122,5 +159,4 @@ export default function Profile({client, onClientUpdate} : ProfileProps) {
             </div>
         </div>
     );
-
 }

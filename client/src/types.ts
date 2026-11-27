@@ -4,6 +4,7 @@ export interface Client {
     email: string;
     phone: string;
     password: string;
+    advisor?: { id: number; name: string } | null;
 }
 
 export interface Asset {
