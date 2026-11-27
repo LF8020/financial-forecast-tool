@@ -1,8 +1,8 @@
 -- Data here will be inserted into the database when the server starts.
 INSERT INTO Client (Name, Email, Phone, Password)
-    VALUES ('Jane Smith', 'jane.smith@example.com', '(555)555-5556', 'password456');
+    VALUES ('Jane Smith', 'jane.smith@example.com', '+1 (555) 555-5556', 'password456');
 INSERT INTO Client (Name, Advisor_ID, Email, Phone, Password)
-    VALUES ('John Doe', 1, 'john.doe@example.com', '(555)555-5555', 'password123');
+    VALUES ('John Doe', 1, 'john.doe@example.com', '+1 (555) 555-5555', 'password123');
 
 INSERT INTO Scenario (Client_ID, Name, Description, Locked)
     VALUES (1, 'Investment Plan', 'Jane Smith needs to Jane Invest.', false);
